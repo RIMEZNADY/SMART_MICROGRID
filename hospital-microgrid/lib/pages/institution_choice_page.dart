@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hospital_microgrid/services/solar_zone_service.dart';
 import 'package:hospital_microgrid/pages/form_a1_page.dart';
 import 'package:hospital_microgrid/pages/form_b1_page.dart';
+import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
 
 class InstitutionChoicePage extends StatelessWidget {
   final Position? position;
@@ -22,7 +23,19 @@ class InstitutionChoicePage extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    MedicalSolarColors.darkBackground,
+                    MedicalSolarColors.darkSurface,
+                  ]
+                : [
+                    MedicalSolarColors.offWhite,
+                    MedicalSolarColors.medicalBlue.withOpacity(0.05),
+                  ],
+          ),
         ),
         child: SafeArea(
           child: Center(
@@ -41,7 +54,7 @@ class InstitutionChoicePage extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: isDark
                           ? Colors.white
-                          : const Color(0xFF0F172A),
+                          : MedicalSolarColors.softGrey,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -63,7 +76,7 @@ class InstitutionChoicePage extends StatelessWidget {
                         ),
                       );
                     },
-                    color: const Color(0xFF6366F1),
+                    color: MedicalSolarColors.medicalBlue,
                   ),
                   const SizedBox(height: 20),
                   // NEW Button
@@ -81,7 +94,7 @@ class InstitutionChoicePage extends StatelessWidget {
                         ),
                       );
                     },
-                    color: const Color(0xFF06B6D4),
+                    color: MedicalSolarColors.solarGreen,
                   ),
                 ],
               ),
@@ -108,9 +121,9 @@ class InstitutionChoicePage extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             color,
-            color == const Color(0xFF6366F1)
-                ? const Color(0xFF06B6D4)
-                : const Color(0xFF8B5CF6),
+            color == MedicalSolarColors.medicalBlue
+                ? MedicalSolarColors.solarGreen
+                : MedicalSolarColors.solarYellow,
           ],
         ),
         boxShadow: [
@@ -150,4 +163,3 @@ class InstitutionChoicePage extends StatelessWidget {
     );
   }
 }
-

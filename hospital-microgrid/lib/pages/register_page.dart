@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hospital_microgrid/main.dart';
-import 'package:hospital_microgrid/providers/theme_provider.dart';
+import 'package:hospital_microgrid/pages/institution_choice_page.dart';
 import 'package:hospital_microgrid/services/auth_service.dart';
+import 'package:hospital_microgrid/theme/semantic_colors.dart';
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
+class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneController = TextEditingController();
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
   late AnimationController _animationController;
@@ -56,10 +61,14 @@ class _LoginPageState extends State<LoginPage>
     _animationController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleLogin() async {
+  Future<void> _handleRegister() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -67,9 +76,14 @@ class _LoginPageState extends State<LoginPage>
 
       try {
         // Appel API r�el au backend
-        await AuthService.login(
-          _emailController.text.trim(),
-          _passwordController.text,
+        await AuthService.register(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          firstName: _firstNameController.text.trim(),
+          lastName: _lastNameController.text.trim(),
+          phone: _phoneController.text.trim().isEmpty 
+              ? null 
+              : _phoneController.text.trim(),
         );
 
         if (mounted) {
@@ -77,12 +91,11 @@ class _LoginPageState extends State<LoginPage>
             _isLoading = false;
           });
 
-          // Navigate to dashboard on successful login
-          final themeProvider = ThemeProvider();
+          // Navigate to institution choice page after successful registration
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomePage(themeProvider: themeProvider),
+              builder: (context) => const InstitutionChoicePage(),
             ),
           );
         }
@@ -93,11 +106,12 @@ class _LoginPageState extends State<LoginPage>
           });
 
           // Afficher l'erreur
+          final errorMessage = e.toString().replaceAll('AuthException: ', '');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(e.toString()),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
+              content: Text(errorMessage),
+              backgroundColor: SemanticColors.error(context),
+              duration: const Duration(seconds: 4),
             ),
           );
         }
@@ -130,8 +144,8 @@ class _LoginPageState extends State<LoginPage>
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
             child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
                 position: _slideAnimation,
                 child: Form(
                   key: _formKey,
@@ -158,7 +172,7 @@ class _LoginPageState extends State<LoginPage>
                           height: 80,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
@@ -175,7 +189,7 @@ class _LoginPageState extends State<LoginPage>
                             ],
                           ),
                           child: const Icon(
-                            Icons.bolt,
+                            Icons.person_add,
                             color: Colors.white,
                             size: 40,
                           ),
@@ -184,7 +198,7 @@ class _LoginPageState extends State<LoginPage>
                       const SizedBox(height: 32),
                       // Title
                       Text(
-                        'Connexion',
+                        'Inscription',
                         style: GoogleFonts.inter(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -196,7 +210,7 @@ class _LoginPageState extends State<LoginPage>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Connectez-vous à � votre compte',
+                        'Cr�ez votre compte pour commencer',
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           color: isDark
@@ -206,16 +220,57 @@ class _LoginPageState extends State<LoginPage>
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 40),
+                      // First Name Field
+                      TextFormField(
+                        controller: _firstNameController,
+                        decoration: _buildInputDecoration(
+                          context,
+                          isDark,
+                          'Pr�nom',
+                          Icons.person_outline,
+                        ),
+                        style: GoogleFonts.inter(
+                          color: isDark ? Colors.white : MedicalSolarColors.softGrey,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer votre pr�nom';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      // Last Name Field
+                      TextFormField(
+                        controller: _lastNameController,
+                        decoration: _buildInputDecoration(
+                          context,
+                          isDark,
+                          'Nom',
+                          Icons.person_outline,
+                        ),
+                        style: GoogleFonts.inter(
+                          color: isDark ? Colors.white : MedicalSolarColors.softGrey,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer votre nom';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
                       // Email Field
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         autofillHints: const [AutofillHints.email],
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          hintText: 'votre@email.com',
-                          prefixIcon: const Icon(Icons.email_outlined),
+                        decoration: _buildInputDecoration(
+                          context,
+                          isDark,
+                          'Email',
+                          Icons.email_outlined,
                           suffixIcon: IconButton(
                             icon: const Text('@', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                             tooltip: 'Ins�rer @',
@@ -235,33 +290,6 @@ class _LoginPageState extends State<LoginPage>
                               );
                             },
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.withOpacity(0.3),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.withOpacity(0.3),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MedicalSolarColors.medicalBlue,
-                              width: 2,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: isDark
-                              ? MedicalSolarColors.darkSurface
-                              : Colors.white,
                         ),
                         style: GoogleFonts.inter(
                           color: isDark ? Colors.white : MedicalSolarColors.softGrey,
@@ -277,14 +305,30 @@ class _LoginPageState extends State<LoginPage>
                         },
                       ),
                       const SizedBox(height: 20),
+                      // Phone Field (optional)
+                      TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: _buildInputDecoration(
+                          context,
+                          isDark,
+                          'T�l�phone (optionnel)',
+                          Icons.phone_outlined,
+                        ),
+                        style: GoogleFonts.inter(
+                          color: isDark ? Colors.white : MedicalSolarColors.softGrey,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       // Password Field
                       TextFormField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
-                        decoration: InputDecoration(
-                          labelText: 'Mot de passe',
-                          hintText: '��������',
-                          prefixIcon: const Icon(Icons.lock_outlined),
+                        decoration: _buildInputDecoration(
+                          context,
+                          isDark,
+                          'Mot de passe',
+                          Icons.lock_outlined,
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
@@ -297,33 +341,6 @@ class _LoginPageState extends State<LoginPage>
                               });
                             },
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.withOpacity(0.3),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.withOpacity(0.3),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MedicalSolarColors.medicalBlue,
-                              width: 2,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: isDark
-                              ? MedicalSolarColors.darkSurface
-                              : Colors.white,
                         ),
                         style: GoogleFonts.inter(
                           color: isDark ? Colors.white : MedicalSolarColors.softGrey,
@@ -338,8 +355,44 @@ class _LoginPageState extends State<LoginPage>
                           return null;
                         },
                       ),
+                      const SizedBox(height: 20),
+                      // Confirm Password Field
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscureConfirmPassword,
+                        decoration: _buildInputDecoration(
+                          context,
+                          isDark,
+                          'Confirmer le mot de passe',
+                          Icons.lock_outlined,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                              });
+                            },
+                          ),
+                        ),
+                        style: GoogleFonts.inter(
+                          color: isDark ? Colors.white : MedicalSolarColors.softGrey,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez confirmer votre mot de passe';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Les mots de passe ne correspondent pas';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 32),
-                      // Login Button
+                      // Register Button
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
@@ -362,7 +415,7 @@ class _LoginPageState extends State<LoginPage>
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: _isLoading ? null : _handleLogin,
+                            onTap: _isLoading ? null : _handleRegister,
                             borderRadius: BorderRadius.circular(16),
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 18),
@@ -380,7 +433,7 @@ class _LoginPageState extends State<LoginPage>
                                       ),
                                     )
                                   : Text(
-                                      'Se connecter',
+                                      'S\'inscrire',
                                       style: GoogleFonts.inter(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
@@ -402,5 +455,45 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+
+  InputDecoration _buildInputDecoration(
+    BuildContext context,
+    bool isDark,
+    String label,
+    IconData prefixIcon, {
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(prefixIcon),
+      suffixIcon: suffixIcon,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: isDark
+              ? Colors.white.withOpacity(0.2)
+              : Colors.grey.withOpacity(0.3),
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: isDark
+              ? Colors.white.withOpacity(0.2)
+              : Colors.grey.withOpacity(0.3),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(
+          color: MedicalSolarColors.medicalBlue,
+          width: 2,
+        ),
+      ),
+      filled: true,
+      fillColor: isDark ? MedicalSolarColors.darkSurface : Colors.white,
+    );
+  }
 }
+
 
