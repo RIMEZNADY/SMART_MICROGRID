@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hospital_microgrid/services/solar_zone_service.dart';
 import 'package:hospital_microgrid/pages/form_b4_page.dart';
+import 'package:hospital_microgrid/widgets/hierarchical_type_selector.dart';
 
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
 
@@ -29,17 +30,8 @@ class FormB3Page extends StatefulWidget {
 }
 
 class _FormB3PageState extends State<FormB3Page> {
-  String? _selectedHospitalType;
+  String? _selectedHospitalTypeBackend; // Valeur backend (ex: 'CHU', 'HOPITAL_REGIONAL')
   String? _selectedPriorite;
-
-  final List<String> _hospitalTypes = [
-    'Hôpital Régional',
-    'CHU (Centre Hospitalier Universitaire)',
-    'Hôpital Provincial',
-    'Centre de Santé',
-    'Clinique',
-    'Autre',
-  ];
 
   final List<String> _priorites = [
     'Haute - Production maximale d\'énergie',
@@ -48,15 +40,18 @@ class _FormB3PageState extends State<FormB3Page> {
   ];
 
   void _handleNext() {
-    if (_selectedHospitalType == null || _selectedPriorite == null) {
+    if (_selectedHospitalTypeBackend == null || _selectedPriorite == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Veuillez sélectionner le type d\'hôpital et la priorité'),
+          content: Text('Veuillez sélectionner le type d\'établissement et la priorité'),
           backgroundColor: Colors.orange,
         ),
       );
       return;
     }
+
+    // Convertir la valeur backend en nom d'affichage pour FormB4Page
+    final hospitalTypeDisplay = _getDisplayNameFromBackend(_selectedHospitalTypeBackend!);
 
     Navigator.push(
       context,
@@ -68,11 +63,49 @@ class _FormB3PageState extends State<FormB3Page> {
           totalSurface: widget.totalSurface,
           solarSurface: widget.solarSurface,
           population: widget.population,
-          hospitalType: _selectedHospitalType!,
+          hospitalType: hospitalTypeDisplay,
           priorite: _selectedPriorite!,
         ),
       ),
     );
+  }
+
+  String _getDisplayNameFromBackend(String backendValue) {
+    // Mapper les valeurs backend vers les noms d'affichage
+    switch (backendValue) {
+      case 'CHU':
+        return 'CHU (Centre Hospitalier Universitaire)';
+      case 'HOPITAL_REGIONAL':
+        return 'Hôpital Régional';
+      case 'HOPITAL_PROVINCIAL':
+        return 'Hôpital Provincial';
+      case 'HOPITAL_PREFECTORAL':
+        return 'Hôpital Préfectoral';
+      case 'HOPITAL_SPECIALISE':
+        return 'Hôpital Spécialisé';
+      case 'CENTRE_REGIONAL_ONCOLOGIE':
+        return 'Centre Régional d\'Oncologie';
+      case 'CENTRE_HEMODIALYSE':
+        return 'Centre d\'Hémodialyse';
+      case 'CENTRE_REEDUCATION':
+        return 'Centre de Rééducation';
+      case 'CENTRE_ADDICTOLOGIE':
+        return 'Centre d\'Addictologie';
+      case 'UMH':
+        return 'UMH (Urgences Médico-Hospitalières)';
+      case 'UMP':
+        return 'UMP (Urgences Médicales de Proximité)';
+      case 'UPH':
+        return 'UPH (Urgences Pré-Hospitalières)';
+      case 'CENTRE_SANTE_PRIMAIRE':
+        return 'Centre de Santé Primaire';
+      case 'CLINIQUE_PRIVEE':
+        return 'Clinique Privée';
+      case 'AUTRE':
+        return 'Autre';
+      default:
+        return backendValue;
+    }
   }
 
   @override
@@ -120,50 +153,12 @@ class _FormB3PageState extends State<FormB3Page> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedHospitalType,
-                  decoration: InputDecoration(
-                    hintText: 'Sélectionnez le type d\'hôpital',
-                    prefixIcon: const Icon(Icons.local_hospital),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.2)
-                            : Colors.grey.withOpacity(0.3),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.2)
-                            : Colors.grey.withOpacity(0.3),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: MedicalSolarColors.medicalBlue,
-                        width: 2,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: isDark ? MedicalSolarColors.darkSurface : Colors.white,
-                  ),
-                  dropdownColor: isDark ? MedicalSolarColors.darkSurface : Colors.white,
-                  style: GoogleFonts.inter(
-                    color: isDark ? Colors.white : MedicalSolarColors.softGrey,
-                  ),
-                  items: _hospitalTypes.map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
+                HierarchicalTypeSelector(
+                  selectedValue: _selectedHospitalTypeBackend,
+                  isDark: isDark,
+                  onChanged: (String backendValue) {
                     setState(() {
-                      _selectedHospitalType = value;
+                      _selectedHospitalTypeBackend = backendValue;
                     });
                   },
                 ),

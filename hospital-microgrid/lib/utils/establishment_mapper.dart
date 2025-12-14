@@ -1,27 +1,54 @@
 /// Mappe les types d'établissement du frontend vers le backend
 class EstablishmentMapper {
  /// Convertit le type d'établissement du frontend vers le format backend
+ /// Supporte maintenant tous les types du workflow EXISTANT et NEW
  static String mapInstitutionTypeToBackend(String frontendType) {
- // Les types dans FormA1 sont:
- // 'CHU (Centre Hospitalier Universitaire)'
- // 'Hôpital Gnral'
- // 'Hôpital Spcialis'
- // 'Clinique'
- // 'Centre de Sant'
- // 'Autre'
+ // Les types peuvent être soit des noms d'affichage, soit directement des valeurs backend
+ // Si c'est déjà une valeur backend, la retourner telle quelle
+ if (frontendType == 'CHU' || frontendType == 'HOPITAL_REGIONAL' || 
+     frontendType == 'HOPITAL_PROVINCIAL' || frontendType == 'HOPITAL_GENERAL' ||
+     frontendType == 'HOPITAL_SPECIALISE' || frontendType == 'CENTRE_REGIONAL_ONCOLOGIE' ||
+     frontendType == 'CENTRE_HEMODIALYSE' || frontendType == 'CENTRE_REEDUCATION' ||
+     frontendType == 'CENTRE_ADDICTOLOGIE' || frontendType == 'UMH' ||
+     frontendType == 'UMP' || frontendType == 'UPH' ||
+     frontendType == 'CENTRE_SANTE_PRIMAIRE' || frontendType == 'CLINIQUE_PRIVEE' ||
+     frontendType == 'AUTRE') {
+   return frontendType;
+ }
  
+ // Sinon, mapper depuis les noms d'affichage
  if (frontendType.contains('CHU')) {
- return 'CHU';
- } else if (frontendType.contains('Hôpital Gnral')) {
- return 'HOPITAL_REGIONAL'; // ou HOPITAL_PROVINCIAL selon le besoin
- } else if (frontendType.contains('Hôpital Spcialis')) {
- return 'HOPITAL_REGIONAL';
+   return 'CHU';
+ } else if (frontendType.contains('Hôpital Régional')) {
+   return 'HOPITAL_REGIONAL';
+ } else if (frontendType.contains('Hôpital Provincial')) {
+   return 'HOPITAL_PROVINCIAL';
+ } else if (frontendType.contains('Hôpital Préfectoral') || frontendType.contains('Hôpital Général')) {
+   return 'HOPITAL_PREFECTORAL';
+ } else if (frontendType.contains('Hôpital Spécialisé') || frontendType.contains('Hôpital Spcialis')) {
+   return 'HOPITAL_SPECIALISE';
+ } else if (frontendType.contains('Centre Régional d\'Oncologie') || frontendType.contains('Oncologie')) {
+   return 'CENTRE_REGIONAL_ONCOLOGIE';
+ } else if (frontendType.contains('Hémodialyse')) {
+   return 'CENTRE_HEMODIALYSE';
+ } else if (frontendType.contains('Rééducation') || frontendType.contains('Reeducation')) {
+   return 'CENTRE_REEDUCATION';
+ } else if (frontendType.contains('Addictologie')) {
+   return 'CENTRE_ADDICTOLOGIE';
+ } else if (frontendType.contains('UMH')) {
+   return 'UMH';
+ } else if (frontendType.contains('UMP')) {
+   return 'UMP';
+ } else if (frontendType.contains('UPH')) {
+   return 'UPH';
+ } else if (frontendType.contains('Centre de Santé Primaire') || frontendType.contains('Centre de Sant')) {
+   return 'CENTRE_SANTE_PRIMAIRE';
  } else if (frontendType.contains('Clinique')) {
- return 'CLINIQUE_PRIVEE';
- } else if (frontendType.contains('Centre de Sant')) {
- return 'CENTRE_SANTE_PRIMAIRE';
+   return 'CLINIQUE_PRIVEE';
+ } else if (frontendType.contains('Autre')) {
+   return 'CENTRE_SANTE_PRIMAIRE'; // Fallback car AUTRE n'existe pas dans le backend
  } else {
- return 'CENTRE_SANTE_PRIMAIRE'; // Par dfaut pour "Autre"
+   return 'CENTRE_SANTE_PRIMAIRE'; // Par défaut
  }
  }
  

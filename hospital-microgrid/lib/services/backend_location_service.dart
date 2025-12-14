@@ -52,7 +52,40 @@ class IrradiationResponse {
  );
  }
 
- /// Convertit la classe d'irradiation (A, B, C, D) en SolarZone
+  /// Estime la population environnante selon les coordonnées GPS
+  /// Retourne une estimation de la population
+  static Future<int> estimatePopulation({
+    required double latitude,
+    required double longitude,
+    String? establishmentType,
+    int? numberOfBeds,
+  }) async {
+    try {
+      String url = '/location/estimate-population?latitude=$latitude&longitude=$longitude';
+      if (establishmentType != null) {
+        url += '&establishmentType=$establishmentType';
+      }
+      if (numberOfBeds != null) {
+        url += '&numberOfBeds=$numberOfBeds';
+      }
+      
+      final response = await ApiService.get(
+        url,
+        includeAuth: false, // Endpoint public
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return (data['estimatedPopulation'] as num).toInt();
+      } else {
+        throw Exception('Erreur lors de l\'estimation de la population: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Erreur réseau: $e');
+    }
+  }
+
+  /// Convertit la classe d'irradiation (A, B, C, D) en SolarZone
  /// A -> zone1, B -> zone2, C -> zone3, D -> zone4
  String get solarZoneName {
  switch (irradiationClass) {
