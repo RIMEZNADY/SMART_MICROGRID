@@ -45,6 +45,37 @@ public class LocationController {
         
         return ResponseEntity.ok(response);
     }
+    
+    /**
+     * Estime la population environnante selon les coordonnées GPS et le type d'établissement
+     * GET /api/location/estimate-population?latitude=33.5731&longitude=-7.5898&establishmentType=CHU&numberOfBeds=500
+     */
+    @GetMapping("/estimate-population")
+    public ResponseEntity<Map<String, Object>> estimatePopulation(
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
+            @RequestParam(required = false) String establishmentType,
+            @RequestParam(required = false) Integer numberOfBeds) {
+        
+        Integer estimatedPopulation = locationService.estimatePopulation(
+            latitude, longitude, 
+            establishmentType != null ? establishmentType : "HOPITAL_REGIONAL",
+            numberOfBeds
+        );
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("estimatedPopulation", estimatedPopulation);
+        response.put("latitude", latitude);
+        response.put("longitude", longitude);
+        if (establishmentType != null) {
+            response.put("establishmentType", establishmentType);
+        }
+        if (numberOfBeds != null) {
+            response.put("numberOfBeds", numberOfBeds);
+        }
+        
+        return ResponseEntity.ok(response);
+    }
 }
 
 
