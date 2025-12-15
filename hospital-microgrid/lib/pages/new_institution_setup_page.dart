@@ -27,10 +27,10 @@ class _NewInstitutionSetupPageState extends State<NewInstitutionSetupPage> {
 
  final List<String> _institutionTypes = [
  'CHU (Centre Hospitalier Universitaire)',
- 'Hé�pital Gé�né�ral',
- 'Hé�pital Spé�cialisé�',
+ 'Héepital Géenéeral',
+ 'Héepital Spéecialisée',
  'Clinique',
- 'Centre de Santé�',
+ 'Centre de Santée',
  'Autre',
  ];
 
@@ -43,11 +43,11 @@ class _NewInstitutionSetupPageState extends State<NewInstitutionSetupPage> {
 
  void _submitForm() {
  if (_formKey.currentState!.validate()) {
- // Ici, on enverra les donn�es au backend
+ // Ici, on enverra les donnees au backend
  // Pour l'instant, on navigue vers le dashboard
  ScaffoldMessenger.of(context).showSnackBar(
  const SnackBar(
- content: Text('Configuration enregistr�e avec succ�s!'),
+ content: Text('Configuration enregistree avec succes!'),
  backgroundColor: Colors.green,
  ),
  );
@@ -113,7 +113,7 @@ class _NewInstitutionSetupPageState extends State<NewInstitutionSetupPage> {
  ),
  const SizedBox(height: 8),
  Text(
- 'Votre microgrid sera configuré� selon cette zone solaire.',
+ 'Votre microgrid sera configurée selon cette zone solaire.',
  style: TextStyle(
  fontSize: 12,
  color: isDark
@@ -138,7 +138,7 @@ class _NewInstitutionSetupPageState extends State<NewInstitutionSetupPage> {
  controller: _nameController,
  decoration: InputDecoration(
  labelText: 'Nom de l\'institution',
- hintText: 'Ex: Hé�pital Ibn Sina',
+ hintText: 'Ex: Héepital Ibn Sina',
  prefixIcon: const Icon(Icons.business),
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(12),
@@ -175,15 +175,15 @@ class _NewInstitutionSetupPageState extends State<NewInstitutionSetupPage> {
  },
  validator: (value) {
  if (value == null || value.isEmpty) {
- return 'Veuillez s�leCoûtionner un type';
+ return 'Veuillez selectionner un type';
  }
  return null;
  },
  ),
  const SizedBox(height: 32),
- // Informations supplé�mentaires (optionnel)
+ // Informations suppléementaires (optionnel)
  Text(
- 'Informations suppl�mentaires (optionnel)',
+ 'Informations supplementaires (optionnel)',
  style: Theme.of(context).textTheme.titleMedium?.copyWith(
  fontWeight: FontWeight.w600,
  ),
@@ -193,8 +193,8 @@ class _NewInstitutionSetupPageState extends State<NewInstitutionSetupPage> {
  controller: _typeController,
  maxLines: 3,
  decoration: InputDecoration(
- labelText: 'Notes ou informations compl�mentaires',
- hintText: 'capacité�, nombre de lits, �quipements sp�ciaux...',
+ labelText: 'Notes ou informations complementaires',
+ hintText: 'capacitée, nombre de lits, Equipements speciaux...',
  border: OutlineInputBorder(
  borderRadius: BorderRadius.circular(12),
  ),
@@ -211,7 +211,7 @@ class _NewInstitutionSetupPageState extends State<NewInstitutionSetupPage> {
  ),
  ),
  child: const Text(
- 'Cr�er l\'Institution',
+ 'Creer l\'Institution',
  style: TextStyle(fontSize: 16),
  ),
  ),

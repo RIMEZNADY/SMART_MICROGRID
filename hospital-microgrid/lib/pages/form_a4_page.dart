@@ -42,14 +42,14 @@ class _FormA4PageState extends State<FormA4Page> {
  }
 
  void _calculateRecommendations() {
- // Calculate recommendations BasÃ©ed on inputs
+ // Calculate recommendations Baseed on inputs
  final dailyProductionKwh = widget.dailyProduction;
  final dailyConsumptionKwh = widget.dailyConsumption;
  
  // Calculate autonomy percentage
  final autonomyPercentage = (dailyProductionKwh / dailyConsumptionKwh * 100).clamp(0, 100);
  
- // Calculate recommended PV power (kW) - assume 200W per m�
+ // Calculate recommended PV power (kW) - assume 200W per me
  final recommendedPVPower = widget.solarSurface * 0.2; // kW
  
  // Calculate recommended battery capacitÃ©y (kWh) - enough for 12 hours of average consumption
@@ -114,7 +114,7 @@ class _FormA4PageState extends State<FormA4Page> {
  const SizedBox(height: 20),
  // Title
  Text(
- 'Recommandations du Systé�me',
+ 'Recommandations du Systéeme',
  style: GoogleFonts.inter(
  fontSize: 24,
  fontWeight: FontWeight.bold,
@@ -123,7 +123,7 @@ class _FormA4PageState extends State<FormA4Page> {
  ),
  const SizedBox(height: 8),
  Text(
- 'BasÃé©é�es sur votre consommation et votre surface disponible',
+ 'BasÃé©éees sur votre consommation et votre surface disponible',
  style: GoogleFonts.inter(
  fontSize: 14,
  color: isDark
@@ -132,13 +132,13 @@ class _FormA4PageState extends State<FormA4Page> {
  ),
  ),
  const SizedBox(height: 32),
- // 1. �conomie possible
+ // 1. economie possible
  _buildRecommendationCard(
  context: context,
  isDark: isDark,
  isMobile: isMobile,
  icon: Icons.savings,
- title: 'é�conomie possible',
+ title: 'éeconomie possible',
  value: '${recommendations['annualSavings'].toStringAsFixed(0)}',
  unit: 'DH/an',
  gradient: const LinearGradient(
@@ -160,13 +160,13 @@ class _FormA4PageState extends State<FormA4Page> {
  ),
  ),
  const SizedBox(height: 20),
- // 3. Puissance PV recommandé�e
+ // 3. Puissance PV recommandéee
  _buildRecommendationCard(
  context: context,
  isDark: isDark,
  isMobile: isMobile,
  icon: Icons.solar_power,
- title: 'Puissance PV recommand�e',
+ title: 'Puissance PV recommandee',
  value: '${recommendations['recommendedPVPower'].toStringAsFixed(2)}',
  unit: 'kW',
  gradient: const LinearGradient(
@@ -174,13 +174,13 @@ class _FormA4PageState extends State<FormA4Page> {
  ),
  ),
  const SizedBox(height: 20),
- // 4. capacitÃé©é� batterie recommandé�e
+ // 4. capacitÃé©ée batterie recommandéee
  _buildRecommendationCard(
  context: context,
  isDark: isDark,
  isMobile: isMobile,
  icon: Icons.battery_std,
- title: 'capacitÃ©� batterie recommand�e',
+ title: 'capacitÃ©e batterie recommandee',
  value: '${recommendations['recommendedBatteryCapacity'].toStringAsFixed(2)}',
  unit: 'kWh',
  gradient: const LinearGradient(

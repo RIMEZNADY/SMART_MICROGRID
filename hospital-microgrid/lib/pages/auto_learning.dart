@@ -453,7 +453,7 @@ class _AutoLearningPageState extends State<AutoLearningPage> {
  _buildComparisonRow('RMSE', metrics.train.rmse, metrics.test.rmse, 'kWh', isDark),
  _buildComparisonRow('MAPE', metrics.train.mape * 100, metrics.test.mape * 100, '%', isDark),
  const SizedBox(height: 8),
- // DteCoûtion sur-entraînement
+ // Dtection sur-entraînement
  if (_detectOverfitting(metrics))
  Container(
  padding: const EdgeInsets.all(12),
@@ -475,7 +475,7 @@ class _AutoLearningPageState extends State<AutoLearningPage> {
  const SizedBox(width: 8),
  Expanded(
  child: Text(
- 'Sur-entraînement dteCoût (cart important entre train et test)',
+ 'Sur-entraînement dtect (cart important entre train et test)',
  style: GoogleFonts.inter(
  fontSize: 12,
  color: SemanticColors.warning(context),

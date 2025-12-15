@@ -16,12 +16,12 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  int? _establishmentId;
  bool _isLoading = true;
  String? _errorMessage;
- int _selectedHorizonDays = 7; // Par d�faut 7 jours
+ int _selectedHorizonDays = 7; // Par defaut 7 jours
  String? _selectedSeason; // null = mode horizon, sinon 'ete', 'hiver', 'printemps', 'automne'
  String _forecastMode = 'horizon'; // 'horizon' ou 'seasonal'
  
  LongTermForecastResponse? _forecast;
- LongTermForecastResponse? _seasonalForecast; // Pr�diCoûtions saisonni�res
+ LongTermForecastResponse? _seasonalForecast; // Predictions saisonnieres
  MlRecommendationsResponse? _mlRecommendations;
  AnomalyGraphResponse? _anomalies;
  SimulationResponse? _simulation;
@@ -39,11 +39,11 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  });
 
  try {
- // R�cup�rer le premier �Ã©tablissement de l'utilisateur
+ // Recuperer le premier eÃ©tablissement de l'utilisateur
  final establishments = await EstablishmentService.getUserEstablishments();
  if (establishments.isEmpty) {
  setState(() {
- _errorMessage = 'Aucun �Ã©tablissement trouv�. Veuillez cr�er un �Ã©tablissement d\'abord.';
+ _errorMessage = 'Aucun eÃ©tablissement trouve. Veuillez creer un eÃ©tablissement d\'abord.';
  _isLoading = false;
  });
  return;
@@ -51,12 +51,12 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
 
  _establishmentId = establishments.first.id;
 
- // S'assurer que _selectedSeason est d�fini si on est en mode seasonal
+ // S'assurer que _selectedSeason est defini si on est en mode seasonal
  if (_forecastMode == 'seasonal' && _selectedSeason == null) {
  _selectedSeason = 'ete';
  }
 
- // Charger toutes les donn�es en parall�le
+ // Charger toutes les donnees en parallele
  Future<LongTermForecastResponse> forecastFuture;
  if (_forecastMode == 'seasonal' && _selectedSeason != null) {
  forecastFuture = AiService.getSeasonalForecast(_establishmentId!, season: _selectedSeason!);
@@ -94,9 +94,9 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  setState(() {
  final errorMsg = e.toString();
  if (errorMsg.contains('403') || errorMsg.contains('401')) {
- _errorMessage = 'Erreur d\'authentification. Veuillez vous reconneCoûter.';
+ _errorMessage = 'Erreur d\'authentification. Veuillez vous reconnecter.';
  } else if (errorMsg.contains('404')) {
- _errorMessage = 'Ressource non trouvé�e. Vé�rifiez que l\'é�Ãé©tablissement existe.';
+ _errorMessage = 'Ressource non trouvéee. Véerifiez que l\'éeÃé©tablissement existe.';
  } else {
  _errorMessage = 'Erreur lors du chargement: $errorMsg';
  }
@@ -122,7 +122,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  const CircularProgressIndicator(),
  const SizedBox(height: 16),
  Text(
- 'Chargement des donné�es AI...',
+ 'Chargement des donnéees AI...',
  style: TextStyle(
  color: Theme.of(context).brightness == Brightness.dark
  ? Colors.white.withOpacity(0.7)
@@ -162,7 +162,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  const SizedBox(height: 24),
  ElevatedButton(
  onPressed: _loadData,
- child: const Text('Ré�essayer'),
+ child: const Text('Réeessayer'),
  ),
  ],
  ),
@@ -242,9 +242,9 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  children: [
  MetricCard(
  icon: Icons.trending_up,
- label: 'ROI Pré�dit ${_mlRecommendations?.confidence == "high" ? "?? ML" : ""}',
+ label: 'ROI Préedit ${_mlRecommendations?.confidence == "high" ? "?? ML" : ""}',
  value: '${roi.toStringAsFixed(1)} ans',
- change: roi < 10 ? 'Excellent' : roi < 20 ? 'Bon' : 'Modé�ré�',
+ change: roi < 10 ? 'Excellent' : roi < 20 ? 'Bon' : 'Modéerée',
  gradientColors: const [
  MedicalSolarColors.medicalBlue,
  MedicalSolarColors.solarGreen,
@@ -255,7 +255,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  icon: Icons.warning_amber,
  label: 'Anomalies',
  value: '$totalAnomalies',
- change: totalAnomalies > 0 ? 'Dé�teCoûté�es' : 'Aucune',
+ change: totalAnomalies > 0 ? 'Déetectéees' : 'Aucune',
  gradientColors: const [
  MedicalSolarColors.solarGreen,
  MedicalSolarColors.medicalBlue,
@@ -303,9 +303,9 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  children: [
  MetricCard(
  icon: Icons.trending_up,
- label: 'ROI Pré�dit ${_mlRecommendations?.confidence == "high" ? "?? ML" : ""}',
+ label: 'ROI Préedit ${_mlRecommendations?.confidence == "high" ? "?? ML" : ""}',
  value: '${roi.toStringAsFixed(1)} ans',
- change: roi < 10 ? 'Excellent' : roi < 20 ? 'Bon' : 'Modé�ré�',
+ change: roi < 10 ? 'Excellent' : roi < 20 ? 'Bon' : 'Modéerée',
  gradientColors: const [
  MedicalSolarColors.medicalBlue,
  MedicalSolarColors.solarGreen,
@@ -315,7 +315,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  icon: Icons.warning_amber,
  label: 'Anomalies',
  value: '$totalAnomalies',
- change: totalAnomalies > 0 ? 'Dé�teCoûté�es' : 'Aucune',
+ change: totalAnomalies > 0 ? 'Déetectéees' : 'Aucune',
  gradientColors: const [
  MedicalSolarColors.solarGreen,
  MedicalSolarColors.medicalBlue,
@@ -361,7 +361,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  ),
  ),
  child: const Center(
- child: Text('Aucune donné�e de pré�vision disponible'),
+ child: Text('Aucune donnéee de préevision disponible'),
  ),
  );
  }
@@ -394,7 +394,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  Row(
  children: [
  Text(
- 'Pré�vision ',
+ 'Préevision ',
  style: TextStyle(
  color: Theme.of(context).brightness == Brightness.dark
  ? Colors.white
@@ -404,7 +404,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  ),
  ),
  const SizedBox(width: 8),
- // S�leCoûteur de mode (Horizon ou Saison)
+ // Selecteur de mode (Horizon ou Saison)
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
  decoration: BoxDecoration(
@@ -433,7 +433,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  setState(() {
  _forecastMode = newValue;
  if (newValue == 'seasonal' && _selectedSeason == null) {
- _selectedSeason = 'ete'; // Par d�faut �t�
+ _selectedSeason = 'ete'; // Par defaut ete
  }
  });
  _loadData();
@@ -448,7 +448,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  ),
  ),
  const SizedBox(width: 8),
- // S�leCoûteur selon le mode
+ // Selecteur selon le mode
  if (_forecastMode == 'horizon')
  Container(
  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -524,7 +524,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  size: 24,
  ),
  items: const [
- DropdownMenuItem(value: 'ete', child: Text('é�té�')),
+ DropdownMenuItem(value: 'ete', child: Text('éetée')),
  DropdownMenuItem(value: 'hiver', child: Text('Hiver')),
  DropdownMenuItem(value: 'printemps', child: Text('Printemps')),
  DropdownMenuItem(value: 'automne', child: Text('Automne')),
@@ -753,7 +753,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  String _getSeasonName(String season) {
  switch (season.toLowerCase()) {
  case 'ete':
- return 'é�té�';
+ return 'éetée';
  case 'hiver':
  return 'Hiver';
  case 'printemps':
@@ -761,7 +761,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  case 'automne':
  return 'Automne';
  default:
- return 'é�té�';
+ return 'éetée';
  }
  }
 
@@ -806,7 +806,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  crossAxisAlignment: CrossAxisAlignment.start,
  children: [
  Text(
- 'Dé�teCoûtion d\'Anomalies',
+ 'Déetection d\'Anomalies',
  style: TextStyle(
  color: Theme.of(context).brightness == Brightness.dark
  ? Colors.white
@@ -846,7 +846,7 @@ class _AIPredictionPageIntegratedState extends State<AIPredictionPageIntegrated>
  const Divider(),
  const SizedBox(height: 16),
  Text(
- 'Anomalies ré�centes:',
+ 'Anomalies réecentes:',
  style: TextStyle(
  color: Theme.of(context).brightness == Brightness.dark
  ? Colors.white.withOpacity(0.7)

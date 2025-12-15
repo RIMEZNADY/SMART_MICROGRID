@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hospital_microgrid/pages/auth_page.dart';
 import 'package:hospital_microgrid/pages/institution_choice_page.dart';
 import 'package:hospital_microgrid/services/auth_service.dart';
 import 'package:hospital_microgrid/theme/semantic_colors.dart';
@@ -75,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage>
       });
 
       try {
-        // Appel API r�el au backend
+        // Appel API reel au backend
         await AuthService.register(
           email: _emailController.text.trim(),
           password: _passwordController.text,
@@ -136,7 +137,7 @@ class _RegisterPageState extends State<RegisterPage>
                   ]
                 : [
                     MedicalSolarColors.offWhite,
-                    const Color(0xFFE8F4F8), // Bleu tr�s clair
+                    MedicalSolarColors.medicalBlue.withOpacity(0.05), // Bleu tres clair
                   ],
           ),
         ),
@@ -161,7 +162,16 @@ class _RegisterPageState extends State<RegisterPage>
                             Icons.arrow_back,
                             color: isDark ? Colors.white : MedicalSolarColors.softGrey,
                           ),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const AuthPage()),
+                              );
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -273,7 +283,7 @@ class _RegisterPageState extends State<RegisterPage>
                           Icons.email_outlined,
                           suffixIcon: IconButton(
                             icon: const Text('@', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            tooltip: 'Ins�rer @',
+                            tooltip: 'Inserer @',
                             onPressed: () {
                               final text = _emailController.text;
                               final selection = _emailController.selection;
@@ -334,6 +344,9 @@ class _RegisterPageState extends State<RegisterPage>
                               _obscurePassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.7)
+                                  : MedicalSolarColors.softGrey.withOpacity(0.7),
                             ),
                             onPressed: () {
                               setState(() {
@@ -350,7 +363,7 @@ class _RegisterPageState extends State<RegisterPage>
                             return 'Veuillez entrer votre mot de passe';
                           }
                           if (value.length < 6) {
-                            return 'Le mot de passe doit contenir au moins 6 caraCoût�res';
+                            return 'Le mot de passe doit contenir au moins 6 caracteres';
                           }
                           return null;
                         },
@@ -370,6 +383,9 @@ class _RegisterPageState extends State<RegisterPage>
                               _obscureConfirmPassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.7)
+                                  : MedicalSolarColors.softGrey.withOpacity(0.7),
                             ),
                             onPressed: () {
                               setState(() {
@@ -465,7 +481,22 @@ class _RegisterPageState extends State<RegisterPage>
   }) {
     return InputDecoration(
       labelText: label,
-      prefixIcon: Icon(prefixIcon),
+      labelStyle: GoogleFonts.inter(
+        color: isDark
+            ? Colors.white.withOpacity(0.7)
+            : MedicalSolarColors.softGrey.withOpacity(0.7),
+      ),
+      hintStyle: GoogleFonts.inter(
+        color: isDark
+            ? Colors.white.withOpacity(0.5)
+            : MedicalSolarColors.softGrey.withOpacity(0.5),
+      ),
+      prefixIcon: Icon(
+        prefixIcon,
+        color: isDark
+            ? Colors.white.withOpacity(0.7)
+            : MedicalSolarColors.softGrey.withOpacity(0.7),
+      ),
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

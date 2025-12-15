@@ -8,7 +8,7 @@ import 'package:hospital_microgrid/widgets/help_tooltip.dart';
 
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
 
-/// Widget pour afficher une m�trique avec un tooltip explicatif professionnel
+/// Widget pour afficher une metrique avec un tooltip explicatif professionnel
 
 class MetricCardWithTooltip extends StatelessWidget {
 

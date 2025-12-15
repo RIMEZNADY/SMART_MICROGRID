@@ -48,20 +48,20 @@ class _FormA5PageState extends State<FormA5Page> {
   double? _aiRecommendedPVPower;
   double? _aiRecommendedBatteryCapacity;
 
-  // �quipements avec prix r�alistes BasÃ©�s sur le march� marocain (2024)
-  // Prix en DH (Dirhams Marocains) - Estimations BasÃ©�es sur le march� local
-  // Note: Les prix peuvent varier selon le fournisseur, la marque et les conditions du march�
+  // Equipements avec prix realistes Basees sur le marche marocain (2024)
+  // Prix en DH (Dirhams Marocains) - Estimations Baseees sur le marche local
+  // Note: Les prix peuvent varier selon le fournisseur, la marque et les conditions du marche
   final List<Map<String, String>> solarPanels = [
-    {'id': 'panel1', 'name': 'Panneau Solaire Monocristallin 400W', 'price': '850', 'efficiency': '21.5%', 'note': 'Prix moyen march�: 2.1-2.3 DH/W'},
-    {'id': 'panel2', 'name': 'Panneau Solaire Polycristallin 380W', 'price': '720', 'efficiency': '19.2%', 'note': 'Prix moyen march�: 1.8-2.0 DH/W'},
-    {'id': 'panel3', 'name': 'Panneau Solaire Bifacial 450W', 'price': '1100', 'efficiency': '22.8%', 'note': 'Prix moyen march�: 2.4-2.6 DH/W'},
-    {'id': 'panel4', 'name': 'Panneau Solaire PERC 410W', 'price': '950', 'efficiency': '21.8%', 'note': 'Prix moyen march�: 2.2-2.4 DH/W'},
+    {'id': 'panel1', 'name': 'Panneau Solaire Monocristallin 400W', 'price': '850', 'efficiency': '21.5%', 'note': 'Prix moyen marche: 2.1-2.3 DH/W'},
+    {'id': 'panel2', 'name': 'Panneau Solaire Polycristallin 380W', 'price': '720', 'efficiency': '19.2%', 'note': 'Prix moyen marche: 1.8-2.0 DH/W'},
+    {'id': 'panel3', 'name': 'Panneau Solaire Bifacial 450W', 'price': '1100', 'efficiency': '22.8%', 'note': 'Prix moyen marche: 2.4-2.6 DH/W'},
+    {'id': 'panel4', 'name': 'Panneau Solaire PERC 410W', 'price': '950', 'efficiency': '21.8%', 'note': 'Prix moyen marche: 2.2-2.4 DH/W'},
   ];
 
   final List<Map<String, String>> batteries = [
     {'id': 'battery1', 'name': 'Batterie Lithium-ion 10kWh', 'price': '45000', 'cycles': '6000', 'note': 'Prix moyen: 4000-5000 DH/kWh'},
     {'id': 'battery2', 'name': 'Batterie Lithium-ion 15kWh', 'price': '65000', 'cycles': '6000', 'note': 'Prix moyen: 4000-5000 DH/kWh'},
-    {'id': 'battery3', 'name': 'Batterie Lithium Fer Phosphate 12kWh', 'price': '52000', 'cycles': '8000', 'note': 'Prix moyen: 4000-5000 DH/kWh (meilleure dur�e de vie)'},
+    {'id': 'battery3', 'name': 'Batterie Lithium Fer Phosphate 12kWh', 'price': '52000', 'cycles': '8000', 'note': 'Prix moyen: 4000-5000 DH/kWh (meilleure duree de vie)'},
     {'id': 'battery4', 'name': 'Batterie AGM 20kWh', 'price': '38000', 'cycles': '1500', 'note': 'Prix moyen: 1500-2500 DH/kWh (moins cher mais moins de cycles)'},
   ];
 
@@ -73,24 +73,24 @@ class _FormA5PageState extends State<FormA5Page> {
   ];
 
   final List<Map<String, String>> controllers = [
-    {'id': 'Coûtrl1', 'name': 'R�gulateur MPPT 60A', 'price': '3500', 'type': 'MPPT', 'note': 'Prix moyen: 55-65 DH/A'},
-    {'id': 'Coûtrl2', 'name': 'R�gulateur MPPT 80A', 'price': '4800', 'type': 'MPPT', 'note': 'Prix moyen: 55-65 DH/A'},
-    {'id': 'Coûtrl3', 'name': 'R�gulateur MPPT 100A', 'price': '6200', 'type': 'MPPT', 'note': 'Prix moyen: 55-65 DH/A'},
-    {'id': 'Coûtrl4', 'name': 'R�gulateur PWM 50A', 'price': '1800', 'type': 'PWM', 'note': 'Prix moyen: 30-40 DH/A (moins efficace)'},
+    {'id': 'ctrl1', 'name': 'Regulateur MPPT 60A', 'price': '3500', 'type': 'MPPT', 'note': 'Prix moyen: 55-65 DH/A'},
+    {'id': 'ctrl2', 'name': 'Regulateur MPPT 80A', 'price': '4800', 'type': 'MPPT', 'note': 'Prix moyen: 55-65 DH/A'},
+    {'id': 'ctrl3', 'name': 'Regulateur MPPT 100A', 'price': '6200', 'type': 'MPPT', 'note': 'Prix moyen: 55-65 DH/A'},
+    {'id': 'ctrl4', 'name': 'Regulateur PWM 50A', 'price': '1800', 'type': 'PWM', 'note': 'Prix moyen: 30-40 DH/A (moins efficace)'},
   ];
 
   Future<void> _handleFinish() async {
     if (_selectedPanel == null || _selectedBattery == null || _selectedInverter == null || _selectedController == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Veuillez s�leCoûtionner tous les �quipements'),
+          content: const Text('Veuillez selectionner tous les Equipements'),
           backgroundColor: SemanticColors.warning(context),
         ),
       );
       return;
     }
 
-    // Cr�er direCoûtement l'�Ã©tablissement
+    // Creer directement l'eÃ©tablissement
     await _createEstablishment();
   }
 
@@ -105,7 +105,7 @@ class _FormA5PageState extends State<FormA5Page> {
     );
 
     try {
-      // Cr�er l'�Ã©tablissement dans le backend
+      // Creer l'eÃ©tablissement dans le backend
       final request = EstablishmentRequest(
         name: widget.institutionName,
         type: EstablishmentMapper.mapInstitutionTypeToBackend(widget.institutionType),
@@ -123,18 +123,18 @@ class _FormA5PageState extends State<FormA5Page> {
       if (mounted) {
         Navigator.pop(context); // Fermer le dialog de chargement
 
-        // Supprimer tous les brouillons apr�s cr�ation r�ussie
+        // Supprimer tous les brouillons apres creation reussie
         await DraftService.clearAllDrafts();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('�Ã©tablissement cr�� avec succ�s!'),
+            content: const Text('eÃ©tablissement cree avec succes!'),
             backgroundColor: SemanticColors.success(context),
             duration: const Duration(seconds: 2),
           ),
         );
 
-        // Naviguer direCoûtement vers la page de r�sultats complets
+        // Naviguer directement vers la page de resultats complets
         final themeProvider = ThemeProvider();
         NavigationHelper.pushAndRemoveUntil(
           context,
@@ -150,7 +150,7 @@ class _FormA5PageState extends State<FormA5Page> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur lors de la cr�ation: ${e.toString()}'),
+            content: Text('Erreur lors de la creation: ${e.toString()}'),
             backgroundColor: SemanticColors.error(context),
             duration: const Duration(seconds: 4),
           ),
@@ -166,7 +166,7 @@ class _FormA5PageState extends State<FormA5Page> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('S�leCoûtion des �quipements'),
+        title: const Text('Selection des Equipements'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -190,13 +190,13 @@ class _FormA5PageState extends State<FormA5Page> {
                   stepLabels: [
                     'Identification',
                     'Technique',
-                    '�quipements',
+                    'Equipements',
                   ],
                 ),
                 const SizedBox(height: 24),
                 // Title
                 Text(
-                  'Choisissez vos �quipements',
+                  'Choisissez vos Equipements',
                   style: GoogleFonts.inter(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -205,7 +205,7 @@ class _FormA5PageState extends State<FormA5Page> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'S�leCoûtionnez les �quipements recommand�s pour votre installation',
+                  'Selectionnez les Equipements recommandes pour votre installation',
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     color: isDark
@@ -313,7 +313,7 @@ class _FormA5PageState extends State<FormA5Page> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Les prix affich�s sont des estimations BasÃ©�es sur le march� marocain (2024). Les prix r�els peuvent varier selon le fournisseur, la marque et les conditions du march�.',
+                          'Les prix affiches sont des estimations Baseees sur le marche marocain (2024). Les prix reels peuvent varier selon le fournisseur, la marque et les conditions du marche.',
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             color: isDark
@@ -334,7 +334,7 @@ class _FormA5PageState extends State<FormA5Page> {
                       isMobile: isMobile,
                       id: panel['id']!,
                       name: panel['name']!,
-                      details: 'Efficacit�: ${panel['efficiency']}',
+                      details: 'Efficacite: ${panel['efficiency']}',
                       price: panel['price']!,
                       isSelected: _selectedPanel == panel['id'],
                       onTap: () {
@@ -382,8 +382,8 @@ class _FormA5PageState extends State<FormA5Page> {
                       },
                     )),
                 const SizedBox(height: 32),
-                // 4. R�gulateurs
-                _buildSectionTitle('R�gulateurs de Charge', Icons.tune, isDark),
+                // 4. Regulateurs
+                _buildSectionTitle('Regulateurs de Charge', Icons.tune, isDark),
                 const SizedBox(height: 16),
                 ...controllers.map((controller) => _buildEquipmentCard(
                       context: context,

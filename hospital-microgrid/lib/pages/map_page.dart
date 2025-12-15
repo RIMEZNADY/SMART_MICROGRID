@@ -33,7 +33,7 @@ class _MapPageState extends State<MapPage> {
  });
 
  try {
- // V�rifier la permission
+ // Verifier la permission
  final hasPermission = await LocationService.isLocationPermissionGranted();
  if (!hasPermission) {
  setState(() {
@@ -43,11 +43,11 @@ class _MapPageState extends State<MapPage> {
  return;
  }
 
- // V�rifier si le GPS est activé�
+ // Verifier si le GPS est activée
  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
  if (!serviceEnabled) {
  setState(() {
- _errorMessage = 'Le GPS n\'est pas activé�';
+ _errorMessage = 'Le GPS n\'est pas activée';
  _isLoading = false;
  });
  return;
@@ -64,7 +64,7 @@ class _MapPageState extends State<MapPage> {
  return;
  }
 
- // D�terminer la zone solaire depuis le backend
+ // Determiner la zone solaire depuis le backend
  final zone = await SolarZoneService.getSolarZoneFromLocation(
  position.latitude,
  position.longitude,
@@ -101,7 +101,7 @@ class _MapPageState extends State<MapPage> {
  body: SafeArea(
  child: Column(
  children: [
- // En-t�te avec informations de la zone
+ // En-tete avec informations de la zone
  if (_solarZone != null && _currentPosition != null)
  Container(
  padding: const EdgeInsets.all(16),
@@ -167,7 +167,7 @@ class _MapPageState extends State<MapPage> {
  Expanded(
  child: Stack(
  children: [
- // Carte g�ographique
+ // Carte geographique
  if (_currentPosition != null)
  FlutterMap(
  mapController: _mapController,
@@ -291,7 +291,7 @@ class _MapPageState extends State<MapPage> {
  ],
  ),
  ),
- // Informations de coordonn�es
+ // Informations de coordonnees
  if (_currentPosition != null)
  Container(
  padding: const EdgeInsets.all(12),

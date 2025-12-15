@@ -226,19 +226,53 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Résultats Complets'),
+        title: Row(
+          children: [
+            Container(
+              width: 4,
+              height: 24,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    MedicalSolarColors.medicalBlue,
+                    MedicalSolarColors.solarGreen,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Resultats Complets',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(_autoRefreshEnabled ? Icons.pause : Icons.play_arrow),
+            icon: Icon(
+              _autoRefreshEnabled ? Icons.pause_circle_outline : Icons.play_circle_outline,
+              size: 24,
+            ),
             onPressed: _toggleAutoRefresh,
             tooltip: _autoRefreshEnabled ? 'Pause auto-refresh' : 'Reprendre auto-refresh',
           ),
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded, size: 24),
             onPressed: _loadData,
             tooltip: 'Actualiser',
           ),
           PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded, size: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             onSelected: (value) {
               switch (value) {
                 case 'export':
@@ -253,9 +287,37 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'export', child: Text('Exporter PDF')),
-              const PopupMenuItem(value: 'share', child: Text('Partager')),
-              const PopupMenuItem(value: 'dashboard', child: Text('Retour Dashboard')),
+              PopupMenuItem(
+                value: 'export',
+                child: Row(
+                  children: [
+                    Icon(Icons.picture_as_pdf_rounded, size: 20, color: MedicalSolarColors.medicalBlue),
+                    const SizedBox(width: 12),
+                    const Text('Exporter PDF'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'share',
+                child: Row(
+                  children: [
+                    Icon(Icons.share_rounded, size: 20, color: MedicalSolarColors.solarGreen),
+                    const SizedBox(width: 12),
+                    const Text('Partager'),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'dashboard',
+                child: Row(
+                  children: [
+                    Icon(Icons.dashboard_rounded, size: 20, color: MedicalSolarColors.softGrey),
+                    const SizedBox(width: 12),
+                    const Text('Retour Dashboard'),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
@@ -264,22 +326,23 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
           isScrollable: isMobile,
           indicatorColor: MedicalSolarColors.medicalBlue,
           indicatorWeight: 3,
+          indicatorSize: TabBarIndicatorSize.tab,
           labelColor: MedicalSolarColors.medicalBlue,
-          unselectedLabelColor: isDark ? Colors.white70 : MedicalSolarColors.softGrey.withOpacity(0.6),
-          labelStyle: GoogleFonts.inter(fontSize: isMobile ? 12 : 14, fontWeight: FontWeight.w600),
+          unselectedLabelColor: isDark ? Colors.white60 : MedicalSolarColors.softGrey.withOpacity(0.5),
+          labelStyle: GoogleFonts.inter(fontSize: isMobile ? 12 : 14, fontWeight: FontWeight.w700, letterSpacing: 0.3),
           unselectedLabelStyle: GoogleFonts.inter(fontSize: isMobile ? 12 : 14, fontWeight: FontWeight.w500),
           tabs: [
             Tab(
               icon: const Icon(Icons.dashboard_rounded, size: 20),
-              text: isMobile ? 'Vue d\'ensemble' : 'Vue d\'ensemble',
+              text: 'Vue d\'ensemble',
             ),
             Tab(
               icon: const Icon(Icons.account_balance_wallet_rounded, size: 20),
-              text: isMobile ? 'Financier' : 'Financier',
+              text: 'Financier',
             ),
             Tab(
               icon: const Icon(Icons.eco_rounded, size: 20),
-              text: isMobile ? 'Environnemental' : 'Environnemental',
+              text: 'Environnemental',
             ),
             Tab(
               icon: const Icon(Icons.build_rounded, size: 20),
@@ -327,37 +390,37 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           // Score Global
           if (globalScore != null) _buildGlobalScoreCard(globalScore, isDark),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           // Métriques principales
           Row(
             children: [
               Expanded(
                 child: _buildMetricCard(
-                  'Autonomie Énergétique',
+                  'Autonomie Energetique',
                   '${(globalScore?['autonomyScore'] ?? 0).toStringAsFixed(1)}%',
                   Icons.battery_charging_full_rounded,
                   MedicalSolarColors.solarGreen,
                   isDark,
-                  tooltip: 'Pourcentage d\'énergie produite par le système solaire par rapport à la consommation totale. Plus ce pourcentage est élevé, plus vous êtes indépendant du réseau.',
+                  tooltip: 'Pourcentage d\'energie produite par le systeme solaire par rapport a la consommation totale. Plus ce pourcentage est eleve, plus vous etes independant du reseau.',
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: _buildMetricCard(
-                  'Économies Annuelles',
+                  'Economies Annuelles',
                   '${(financial?['annualSavings'] ?? 0).toStringAsFixed(0)} DH/an',
                   Icons.savings_rounded,
                   MedicalSolarColors.medicalBlue,
                   isDark,
-                  tooltip: 'Montant économisé chaque année grâce à la production solaire et à la réduction de la facture d\'électricité.',
+                  tooltip: 'Montant economise chaque annee grace a la production solaire et a la reduction de la facture d\'electricite.',
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -383,17 +446,38 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           // Scores par catégorie
-          Text(
-            'Scores par Catégorie',
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : MedicalSolarColors.softGrey,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 24,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      MedicalSolarColors.medicalBlue,
+                      MedicalSolarColors.solarGreen,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Scores par Categorie',
+                style: GoogleFonts.inter(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white : MedicalSolarColors.softGrey,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           if (globalScore != null) _buildCategoryScores(globalScore, isDark),
           const SizedBox(height: 24),
           // Section Amélioration (si PV existant)
@@ -420,93 +504,150 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
                 : MedicalSolarColors.error;
 
     return Tooltip(
-      message: 'Score composite évaluant la qualité globale du projet de microgrid. Basé sur 4 catégories : Autonomie (40%), Économique (30%), Résilience (20%), Environnemental (10%).',
+      message: 'Score composite evaluant la qualite globale du projet de microgrid. Base sur 4 categories : Autonomie (40%), Economique (30%), Resilience (20%), Environnemental (10%).',
       preferBelow: false,
       child: Container(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(36),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              color.withOpacity(0.25),
-              color.withOpacity(0.15),
-              color.withOpacity(0.05),
-            ],
+            colors: isDark
+                ? [
+                    color.withOpacity(0.25),
+                    color.withOpacity(0.15),
+                    MedicalSolarColors.darkSurface,
+                  ]
+                : [
+                    color.withOpacity(0.2),
+                    color.withOpacity(0.1),
+                    Colors.white,
+                  ],
           ),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: color.withOpacity(0.4), width: 2.5),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: color.withOpacity(0.5),
+            width: 2.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: color.withOpacity(0.4),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
               spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           children: [
+            // Star icon with glow effect
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                gradient: RadialGradient(
+                  colors: [
+                    color.withOpacity(0.3),
+                    color.withOpacity(0.1),
+                    Colors.transparent,
+                  ],
+                ),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.star_rounded, size: 56, color: Color(0xFFFFD700)),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.25),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.star_rounded,
+                  size: 64,
+                  color: MedicalSolarColors.solarYellow,
+                  shadows: [
+                    Shadow(
+                      color: MedicalSolarColors.solarYellow.withOpacity(0.5),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Text(
               'Score Global',
               style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : MedicalSolarColors.softGrey,
-                letterSpacing: 0.5,
+                letterSpacing: 0.8,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: [
-                Text(
-                  score.toStringAsFixed(1),
-                  style: GoogleFonts.inter(
-                    fontSize: 72,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                    height: 1,
+                ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: [
+                      color,
+                      color.withOpacity(0.8),
+                    ],
+                  ).createShader(bounds),
+                  child: Text(
+                    score.toStringAsFixed(1),
+                    style: GoogleFonts.inter(
+                      fontSize: 80,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      height: 1,
+                      letterSpacing: -2,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.only(bottom: 16),
                   child: Text(
                     '/ 100',
                     style: GoogleFonts.inter(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white70 : MedicalSolarColors.softGrey.withOpacity(0.7),
+                      fontSize: 32,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white60 : MedicalSolarColors.softGrey.withOpacity(0.6),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  colors: [
+                    color.withOpacity(0.25),
+                    color.withOpacity(0.15),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: color.withOpacity(0.4),
+                  width: 1.5,
+                ),
               ),
               child: Text(
-                score >= 80 ? 'Excellent' : score >= 60 ? 'Bon' : score >= 40 ? 'Moyen' : 'À améliorer',
+                score >= 80 ? 'Excellent' : score >= 60 ? 'Bon' : score >= 40 ? 'Moyen' : 'A ameliorer',
                 style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                   color: color,
+                  letterSpacing: 0.5,
                 ),
               ),
             ),
@@ -521,20 +662,37 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
       message: tooltip ?? title,
       preferBelow: false,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(22),
         decoration: BoxDecoration(
-          color: isDark ? MedicalSolarColors.darkSurface : Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    MedicalSolarColors.darkSurface,
+                    MedicalSolarColors.darkSurface.withOpacity(0.8),
+                  ]
+                : [
+                    Colors.white,
+                    Colors.white,
+                  ],
+          ),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isDark ? Colors.white.withOpacity(0.15) : Colors.grey.withOpacity(0.25),
-            width: 1.5,
+            color: color.withOpacity(0.3),
+            width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: isDark ? Colors.black.withOpacity(0.3) : Colors.grey.withOpacity(0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: color.withOpacity(0.2),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
               spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: isDark ? Colors.black.withOpacity(0.4) : Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -542,33 +700,45 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    color.withOpacity(0.25),
+                    color.withOpacity(0.15),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: color.withOpacity(0.3),
+                  width: 1.5,
+                ),
               ),
-              child: Icon(icon, color: color, size: 28),
+              child: Icon(icon, color: color, size: 32),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             Text(
               title,
               style: GoogleFonts.inter(
                 fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white70 : MedicalSolarColors.softGrey.withOpacity(0.8),
-                letterSpacing: 0.2,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white.withOpacity(0.8) : MedicalSolarColors.softGrey.withOpacity(0.9),
+                letterSpacing: 0.3,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               value,
               style: GoogleFonts.inter(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : MedicalSolarColors.softGrey,
-                height: 1.2,
+                height: 1.1,
+                letterSpacing: -0.5,
               ),
             ),
           ],
@@ -1099,12 +1269,12 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
             children: [
               Expanded(
                 child: _buildMetricCard(
-                  'Coût d\'Installation',
+                  'ct d\'Installation',
                   '${(financial['installationCost'] ?? 0).toStringAsFixed(0)} DH',
                   Icons.construction_rounded,
                   Colors.red.shade400,
                   isDark,
-                  tooltip: 'Coût total d\'installation du système microgrid incluant les panneaux solaires, batteries, onduleurs et installation.',
+                  tooltip: 'ct total d\'installation du système microgrid incluant les panneaux solaires, batteries, onduleurs et installation.',
                 ),
               ),
               const SizedBox(width: 12),
@@ -1836,11 +2006,11 @@ Autonomie: ${autonomy.toStringAsFixed(1)}%
     // Recalculer le ROI (approximation)
     double installationCost = (financial?['installationCost'] ?? 0).toDouble();
     if (type == 'surface') {
-      // Coût supplémentaire pour la surface ajoutée (environ 8000 DH/kWc)
+      // ct supplémentaire pour la surface ajoutée (environ 8000 DH/kWc)
       final additionalCost = (newPvPower - currentPvPower) * 8000;
       installationCost = installationCost + additionalCost;
     } else if (type == 'battery') {
-      // Coût supplémentaire pour la batterie (environ 4500 DH/kWh)
+      // ct supplémentaire pour la batterie (environ 4500 DH/kWh)
       final additionalCost = (newBatteryCapacity - currentBatteryCapacity) * 4500;
       installationCost = installationCost + additionalCost;
     }

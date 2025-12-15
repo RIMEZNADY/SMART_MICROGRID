@@ -99,37 +99,83 @@ class _AuthPageState extends State<AuthPage>
  child: SlideTransition(
  position: _slideAnimation,
  child: Column(
- crossAxisAlignment: CrossAxisAlignment.stretch,
- children: [
- const SizedBox(height: 60),
-                    // Logo
+   crossAxisAlignment: CrossAxisAlignment.stretch,
+   mainAxisSize: MainAxisSize.min,
+   children: [
+     const SizedBox(height: 40),
+                    // Logo with enhanced design
                     Center(
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              MedicalSolarColors.medicalBlue,
-                              MedicalSolarColors.solarGreen,
-                            ],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: MedicalSolarColors.medicalBlue.withOpacity(0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Glow effect
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: RadialGradient(
+                                colors: [
+                                  MedicalSolarColors.medicalBlue.withOpacity(0.2),
+                                  MedicalSolarColors.medicalBlue.withOpacity(0.0),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.medical_services_rounded,
-                          color: Colors.white,
-                          size: 50,
-                        ),
+                          ),
+                          // Main logo container
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  MedicalSolarColors.medicalBlue,
+                                  MedicalSolarColors.solarGreen,
+                                ],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: MedicalSolarColors.medicalBlue.withOpacity(0.4),
+                                  blurRadius: 25,
+                                  offset: const Offset(0, 10),
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Medical icon
+                                const Icon(
+                                  Icons.medical_services_rounded,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                                // Sun icon overlay
+                                Positioned(
+                                  bottom: 8,
+                                  right: 8,
+                                  child: Container(
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: MedicalSolarColors.solarYellow.withOpacity(0.9),
+                                    ),
+                                    child: const Icon(
+                                      Icons.wb_sunny_rounded,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
  const SizedBox(height: 32),
@@ -147,11 +193,11 @@ class _AuthPageState extends State<AuthPage>
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Connectez-vous ou créez un compte pour commencer',
+                      'Connectez-vous ou creez un compte pour commencer',
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         color: isDark
-                            ? Colors.white.withOpacity(0.7)
+                            ? Colors.white.withOpacity(0.8)
                             : MedicalSolarColors.softGrey.withOpacity(0.7),
                       ),
                       textAlign: TextAlign.center,
@@ -159,22 +205,38 @@ class _AuthPageState extends State<AuthPage>
  const SizedBox(height: 60),
  // Login Button
  _buildAuthButton(
- context: context,
- isDark: isDark,
- label: 'Connexion',
- icon: Icons.login,
- onPressed: _handleLogin,
- isPrimary: true,
+   context: context,
+   isDark: isDark,
+   label: 'Connexion',
+   icon: Icons.arrow_forward_rounded,
+   onPressed: _handleLogin,
+   isPrimary: true,
  ),
  const SizedBox(height: 16),
  // Register Button
  _buildAuthButton(
- context: context,
- isDark: isDark,
- label: 'Inscription',
- icon: Icons.person_add,
- onPressed: _handleRegister,
- isPrimary: false,
+   context: context,
+   isDark: isDark,
+   label: 'Inscription',
+   icon: Icons.person_add_rounded,
+   onPressed: _handleRegister,
+   isPrimary: false,
+ ),
+ const SizedBox(height: 40),
+ // Footer text
+ Padding(
+   padding: const EdgeInsets.only(bottom: 32),
+   child: Text(
+     'Microgrid Intelligent pour Hopitaux',
+     style: GoogleFonts.inter(
+       fontSize: 12,
+       color: isDark
+           ? Colors.white.withOpacity(0.5)
+           : MedicalSolarColors.softGrey.withOpacity(0.5),
+       letterSpacing: 0.5,
+     ),
+     textAlign: TextAlign.center,
+   ),
  ),
  ],
  ),
@@ -221,22 +283,23 @@ class _AuthPageState extends State<AuthPage>
  onTap: onPressed,
  borderRadius: BorderRadius.circular(16),
  child: Container(
- padding: const EdgeInsets.symmetric(vertical: 18),
- child: Row(
- mainAxisAlignment: MainAxisAlignment.center,
- children: [
- Icon(icon, color: Colors.white, size: 24),
- const SizedBox(width: 12),
- Text(
- label,
- style: GoogleFonts.inter(
- fontSize: 18,
- fontWeight: FontWeight.w600,
- color: Colors.white,
- ),
- ),
- ],
- ),
+   padding: const EdgeInsets.symmetric(vertical: 18),
+   child: Row(
+     mainAxisAlignment: MainAxisAlignment.center,
+     children: [
+       Text(
+         label,
+         style: GoogleFonts.inter(
+           fontSize: 18,
+           fontWeight: FontWeight.w600,
+           color: Colors.white,
+           letterSpacing: 0.5,
+         ),
+       ),
+       const SizedBox(width: 12),
+       Icon(icon, color: Colors.white, size: 22),
+     ],
+   ),
  ),
  ),
  ),
@@ -266,32 +329,33 @@ class _AuthPageState extends State<AuthPage>
           child: InkWell(
             onTap: onPressed,
             borderRadius: BorderRadius.circular(16),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    icon,
-                    color: isDark
-                        ? Colors.white
-                        : MedicalSolarColors.medicalBlue,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    label,
-                    style: GoogleFonts.inter(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      label,
+                      style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: isDark
+                            ? Colors.white
+                            : MedicalSolarColors.medicalBlue,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Icon(
+                      icon,
                       color: isDark
                           ? Colors.white
                           : MedicalSolarColors.medicalBlue,
+                      size: 22,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
           ),
         ),
       );

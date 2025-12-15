@@ -5,17 +5,21 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:hospital_microgrid/services/location_service.dart';
 import 'package:hospital_microgrid/services/solar_zone_service.dart';
-import 'package:hospital_microgrid/pages/form_b2_page.dart';
-
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
-class FormB1Page extends StatefulWidget {
-  const FormB1Page({super.key});
+
+class MapSelectionPage extends StatefulWidget {
+  final Position? initialPosition;
+
+  const MapSelectionPage({
+    super.key,
+    this.initialPosition,
+  });
 
   @override
-  State<FormB1Page> createState() => _FormB1PageState();
+  State<MapSelectionPage> createState() => _MapSelectionPageState();
 }
 
-class _FormB1PageState extends State<FormB1Page> {
+class _MapSelectionPageState extends State<MapSelectionPage> {
   Position? _currentPosition;
   SolarZone? _solarZone;
   bool _isLoading = false;
@@ -25,20 +29,11 @@ class _FormB1PageState extends State<FormB1Page> {
   @override
   void initState() {
     super.initState();
-    // Verifier la permission au demarrage et demander si necessaire
-    _checkAndRequestLocation();
-  }
-
-  Future<void> _checkAndRequestLocation() async {
-    final hasPermission = await LocationService.isLocationPermissionGranted();
-    if (!hasPermission) {
-      // Ne pas charger automatiquement, attendre que l'utilisateur clique sur le bouton
-      setState(() {
-        _errorMessage = 'Activation de la localisation requise';
-      });
+    _currentPosition = widget.initialPosition;
+    if (_currentPosition != null) {
+      _loadSolarZone();
     } else {
-      // Si la permission existe, charger automatiquement
-      await _loadLocation();
+      _checkAndRequestLocation();
     }
   }
 
@@ -48,15 +43,98 @@ class _FormB1PageState extends State<FormB1Page> {
     super.dispose();
   }
 
-  Future<void> _updateLocationFromMap(double latitude, double longitude) async {
+  Future<void> _checkAndRequestLocation() async {
+    final hasPermission = await LocationService.isLocationPermissionGranted();
+    if (!hasPermission) {
+      setState(() {
+        _errorMessage = 'Activation de la localisation requise';
+      });
+    } else {
+      await _loadLocation();
+    }
+  }
+
+  Future<void> _loadLocation() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      // Creer une Position depuis les coordonnees
-      final position = Position(
+      final hasPermission = await LocationService.requestLocationPermission();
+      if (!hasPermission) {
+        setState(() {
+          _errorMessage = 'Permission de localisation requise';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          _errorMessage = 'Le GPS n\'est pas active';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final position = await LocationService.getCurrentLocation();
+      if (position == null) {
+        setState(() {
+          _errorMessage = 'Impossible d\'obtenir votre localisation.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final zone = await SolarZoneService.getSolarZoneFromLocation(
+        position.latitude,
+        position.longitude,
+      );
+
+      setState(() {
+        _currentPosition = position;
+        _solarZone = zone;
+        _isLoading = false;
+      });
+
+      _mapController.move(
+        LatLng(position.latitude, position.longitude),
+        12.0,
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erreur lors de la mise a jour: ${e.toString()}';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadSolarZone() async {
+    if (_currentPosition == null) return;
+    
+    try {
+      final zone = await SolarZoneService.getSolarZoneFromLocation(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+      );
+      setState(() {
+        _solarZone = zone;
+      });
+    } catch (e) {
+      print('Erreur lors du chargement de la zone solaire: $e');
+    }
+  }
+
+  Future<void> _updateLocationFromMap(double latitude, double longitude) async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    setState(() {
+      _currentPosition = Position(
         latitude: latitude,
         longitude: longitude,
         timestamp: DateTime.now(),
@@ -68,21 +146,19 @@ class _FormB1PageState extends State<FormB1Page> {
         speed: 0,
         speedAccuracy: 0,
       );
+    });
 
-      // Determiner la zone solaire depuis le backend
+    try {
       final zone = await SolarZoneService.getSolarZoneFromLocation(
         latitude,
         longitude,
       );
 
       setState(() {
-        _currentPosition = position;
         _solarZone = zone;
         _isLoading = false;
       });
 
-      // Centrer la carte sur la nouvelle position avec animation
-      await Future.delayed(const Duration(milliseconds: 50));
       _mapController.move(
         LatLng(latitude, longitude),
         _mapController.camera.zoom,
@@ -95,90 +171,17 @@ class _FormB1PageState extends State<FormB1Page> {
     }
   }
 
-  Future<void> _loadLocation() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      // Request permission
-      final hasPermission = await LocationService.requestLocationPermission();
-      
-      if (!hasPermission) {
-        setState(() {
-          _errorMessage = 'Permission de localisation requise';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Check if GPS is enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        setState(() {
-          _errorMessage = 'Le GPS n\'est pas active';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Get location
-      final position = await LocationService.getCurrentLocation();
-      
-      if (position == null) {
-        setState(() {
-          _errorMessage = 'Impossible d\'obtenir votre localisation';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Determine solar zone from backend
-      final zone = await SolarZoneService.getSolarZoneFromLocation(
-        position.latitude,
-        position.longitude,
-      );
-
-      setState(() {
-        _currentPosition = position;
-        _solarZone = zone;
-        _isLoading = false;
-      });
-
-      // Center map on position
-      _mapController.move(
-        LatLng(position.latitude, position.longitude),
-        12.0,
-      );
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Erreur: ${e.toString()}';
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _handleNext() {
-    if (_currentPosition == null || _solarZone == null) {
+  void _confirmSelection() {
+    if (_currentPosition != null && _solarZone != null) {
+      Navigator.pop(context, _currentPosition);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Veuillez activer le GPS et obtenir votre localisation'),
-          backgroundColor: Colors.orange,
+        SnackBar(
+          content: const Text('Veuillez selectionner une localisation sur la carte'),
+          backgroundColor: MedicalSolarColors.error,
         ),
       );
-      return;
     }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FormB2Page(
-          position: _currentPosition!,
-          solarZone: _solarZone!,
-        ),
-      ),
-    );
   }
 
   @override
@@ -187,15 +190,14 @@ class _FormB1PageState extends State<FormB1Page> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Activation GPS & Carte'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        title: const Text('Selection de la Localisation'),
+        backgroundColor: isDark ? MedicalSolarColors.darkSurface : MedicalSolarColors.offWhite,
+        foregroundColor: isDark ? Colors.white : MedicalSolarColors.softGrey,
+        elevation: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? MedicalSolarColors.softGrey : MedicalSolarColors.offWhite,
+          color: isDark ? MedicalSolarColors.darkBackground : MedicalSolarColors.offWhite,
         ),
         child: SafeArea(
           child: Column(
@@ -217,17 +219,16 @@ class _FormB1PageState extends State<FormB1Page> {
                   child: Row(
                     children: [
                       Container(
-                        width: 48,
-                        height: 48,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
                           color: Color(SolarZoneService.getZoneColor(_solarZone!))
                               .withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           Icons.wb_sunny,
                           color: Color(SolarZoneService.getZoneColor(_solarZone!)),
-                          size: 24,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -303,9 +304,11 @@ class _FormB1PageState extends State<FormB1Page> {
                         minZoom: 5.0,
                         maxZoom: 18.0,
                         onTap: (tapPosition, point) async {
-                          // Selection manuelle sur la carte
                           await _updateLocationFromMap(point.latitude, point.longitude);
                         },
+                        interactionOptions: const InteractionOptions(
+                          flags: InteractiveFlag.all,
+                        ),
                       ),
                       children: [
                         TileLayer(
@@ -327,7 +330,7 @@ class _FormB1PageState extends State<FormB1Page> {
                                   decoration: BoxDecoration(
                                     color: _solarZone != null
                                         ? Color(SolarZoneService.getZoneColor(_solarZone!))
-                                        : MedicalSolarColors.medicalBlue,
+                                        : Theme.of(context).colorScheme.primary,
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       color: Colors.white,
@@ -337,7 +340,7 @@ class _FormB1PageState extends State<FormB1Page> {
                                       BoxShadow(
                                         color: (_solarZone != null
                                             ? Color(SolarZoneService.getZoneColor(_solarZone!))
-                                            : MedicalSolarColors.medicalBlue)
+                                            : Theme.of(context).colorScheme.primary)
                                             .withOpacity(0.5),
                                         blurRadius: 15,
                                         spreadRadius: 3,
@@ -355,65 +358,116 @@ class _FormB1PageState extends State<FormB1Page> {
                           ),
                       ],
                     ),
-                    // Overlay pour le chargement ou les erreurs
-                    if (_isLoading || (_currentPosition == null && _errorMessage != null))
-                      Container(
-                        color: Colors.black.withOpacity(0.3),
-                        child: Center(
-                          child: _isLoading
-                              ? const CircularProgressIndicator()
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        gradient: LinearGradient(
-                                          colors: [MedicalSolarColors.medicalBlue, MedicalSolarColors.solarGreen],
+                    // Overlay pour le chargement ou les erreurs (seulement si pas de position)
+                    if ((_isLoading || (_currentPosition == null && _errorMessage != null)) && _currentPosition == null)
+                      Positioned.fill(
+                        child: Container(
+                          color: Colors.black.withOpacity(0.3),
+                          child: Center(
+                            child: _isLoading
+                                ? const CircularProgressIndicator()
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Theme.of(context).colorScheme.primary,
+                                              Theme.of(context).colorScheme.secondary,
+                                            ],
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.location_off,
+                                          size: 40,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                      child: const Icon(
-                                        Icons.location_off,
-                                        size: 40,
-                                        color: Colors.white,
+                                      const SizedBox(height: 24),
+                                      Text(
+                                        _errorMessage ?? 'Activation du GPS requise',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Text(
-                                      _errorMessage ?? 'Activation du GPS requise',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(height: 24),
-                                    ElevatedButton.icon(
-                                      onPressed: _loadLocation,
-                                      icon: const Icon(Icons.gps_fixed),
-                                      label: const Text('Activer la localisation'),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 24,
-                                          vertical: 12,
+                                      const SizedBox(height: 24),
+                                      ElevatedButton.icon(
+                                        onPressed: _loadLocation,
+                                        icon: const Icon(Icons.gps_fixed),
+                                        label: const Text('Activer la localisation'),
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 24,
+                                            vertical: 12,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      'Cliquez sur la carte pour choisir\nun autre emplacement',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 13,
-                                        color: Colors.white.withOpacity(0.8),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'Cliquez sur la carte pour choisir\nun autre emplacement',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
+                          ),
                         ),
                       ),
+                    // Instruction banner for map interaction
+                    if (_currentPosition != null)
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        right: 10,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: MedicalSolarColors.medicalBlue.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.touch_app,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    'Appuyez sur la carte pour changer l\'emplacement',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Center location button
                     if (_currentPosition != null)
                       Positioned(
                         bottom: 20,
@@ -430,8 +484,9 @@ class _FormB1PageState extends State<FormB1Page> {
                           },
                           backgroundColor: _solarZone != null
                               ? Color(SolarZoneService.getZoneColor(_solarZone!))
-                              : MedicalSolarColors.medicalBlue,
+                              : Theme.of(context).colorScheme.primary,
                           child: const Icon(Icons.my_location, color: Colors.white),
+                          tooltip: 'Centrer sur ma position',
                         ),
                       ),
                   ],
@@ -440,7 +495,7 @@ class _FormB1PageState extends State<FormB1Page> {
               // Coordinates info
               if (_currentPosition != null && _solarZone != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: isDark ? MedicalSolarColors.darkSurface : Colors.white,
                     border: Border(
@@ -503,71 +558,73 @@ class _FormB1PageState extends State<FormB1Page> {
                     ],
                   ),
                 ),
-              // Next Button
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? MedicalSolarColors.darkSurface : Colors.white,
-                  border: Border(
-                    top: BorderSide(
-                      color: isDark
-                          ? Colors.white24
-                          : Colors.grey.withOpacity(0.2),
+              // Confirm Button
+              if (_currentPosition != null && _solarZone != null)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? MedicalSolarColors.darkSurface : Colors.white,
+                    border: Border(
+                      top: BorderSide(
+                        color: isDark
+                            ? Colors.white24
+                            : Colors.grey.withOpacity(0.2),
+                      ),
                     ),
                   ),
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          MedicalSolarColors.medicalBlue,
-                          MedicalSolarColors.solarGreen,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            MedicalSolarColors.medicalBlue,
+                            MedicalSolarColors.solarGreen,
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: MedicalSolarColors.medicalBlue.withOpacity(0.3),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
+                          ),
                         ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: MedicalSolarColors.medicalBlue.withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: _handleNext,
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Continuer',
-                                style: GoogleFonts.inter(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _confirmSelection,
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Confirmer et Continuer',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Icon(
+                                  Icons.arrow_forward,
                                   color: Colors.white,
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -575,5 +632,4 @@ class _FormB1PageState extends State<FormB1Page> {
     );
   }
 }
-
 

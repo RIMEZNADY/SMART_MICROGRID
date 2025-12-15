@@ -124,7 +124,7 @@ return {
 
  final efficiency = 1 - (distanceFromPeak / 6) * 0.5;
 
- // Assume 200W/m� average solar panel efficiency
+ // Assume 200W/me average solar panel efficiency
 
  production = widget.solarSurface * 0.2 * efficiency;
 
@@ -294,7 +294,7 @@ return {
 
  Text(
 
- 'Analyse BasÃe©e�e sur vos donne�es',
+ 'Analyse BasÃe©eee sur vos donneees',
 
  style: GoogleFonts.inter(
 
@@ -312,7 +312,7 @@ return {
 
  const SizedBox(height: 32),
 
- // 1. Consommation r�elle
+ // 1. Consommation reelle
 
  _buildChartCard(
 
@@ -322,7 +322,7 @@ return {
 
  isMobile: isMobile,
 
- title: 'Consommation re�elle',
+ title: 'Consommation reeelle',
 
  chart: _buildConsumptionChart(isDark, isMobile),
 
@@ -348,7 +348,7 @@ return {
 
  const SizedBox(height: 24),
 
- // 3. SOC batterie simul�
+ // 3. SOC batterie simule
 
  _buildChartCard(
 
@@ -358,7 +358,7 @@ return {
 
  isMobile: isMobile,
 
- title: 'SOC batterie simule�',
+ title: 'SOC batterie simulee',
 
  chart: _buildBatterySOCChart(isDark, isMobile),
 
@@ -366,7 +366,7 @@ return {
 
  const SizedBox(height: 24),
 
- // 4. ImpaCoût m�t�o (ensoleillement)
+ // 4. Impact meteo (ensoleillement)
 
  _buildChartCard(
 
@@ -376,7 +376,7 @@ return {
 
  isMobile: isMobile,
 
- title: 'ImpaCoût me�te�o (ensoleillement, irradiation)',
+ title: 'Impact meeteeo (ensoleillement, irradiation)',
 
  chart: _buildWeatherImpactChart(isDark, isMobile),
 

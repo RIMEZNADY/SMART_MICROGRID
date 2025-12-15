@@ -40,13 +40,13 @@ import 'package:hospital_microgrid/theme/semantic_colors.dart';
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
 
 
-/// Page de r�capitulatif et validation avant cr�ation de l'�Ã©tablissement
+/// Page de recapitulatif et validation avant creation de l'eÃ©tablissement
 
 
 class EstablishmentReviewPage extends StatefulWidget {
 
 
-  // Donn�es A1
+  // Donnees A1
 
 
   final String institutionType;
@@ -61,7 +61,7 @@ class EstablishmentReviewPage extends StatefulWidget {
   final int numberOfBeds;
 
 
-  // Donn�es A2
+  // Donnees A2
 
 
   final double solarSurface;
@@ -79,7 +79,7 @@ class EstablishmentReviewPage extends StatefulWidget {
   final double recommendedBatteryCapacity;
 
 
-  // Donn�es A5
+  // Donnees A5
 
 
   final String? selectedPanel;
@@ -94,7 +94,7 @@ class EstablishmentReviewPage extends StatefulWidget {
   final String? selectedController;
 
 
-  // Liste des �quipements pour afficher les noms
+  // Liste des Equipements pour afficher les noms
 
 
   final List<Map<String, String>> solarPanels;
@@ -187,7 +187,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
   String getEquipmentName(String? id, List<Map<String, String>> list) {
 
 
-    if (id == null) return 'Non s�leCoûtionn�';
+    if (id == null) return 'Non selectionne';
 
 
     final equipment = list.firstWhere(
@@ -196,13 +196,13 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
       (e) => e['id'] == id,
 
 
-      orElse: () => {'name': 'Non trouv�'},
+      orElse: () => {'name': 'Non trouve'},
 
 
     );
 
 
-    return equipment['name'] ?? 'Non trouv�';
+    return equipment['name'] ?? 'Non trouve';
 
 
   }
@@ -256,7 +256,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
   Future<void> _confirmAndCreate() async {
 
 
-    // V�rifier que tous les �quipements sont s�leCoûtionn�s
+    // Verifier que tous les Equipements sont selectionnes
 
 
     if (widget.selectedPanel == null ||
@@ -277,7 +277,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
           SnackBar(
 
 
-            content: const Text('Veuillez s�leCoûtionner tous les �quipements avant de confirmer'),
+            content: const Text('Veuillez selectionner tous les Equipements avant de confirmer'),
 
 
             backgroundColor: SemanticColors.warning(context),
@@ -307,7 +307,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
       builder: (context) => AlertDialog(
 
 
-        title: const Text('Confirmer la cr�ation'),
+        title: const Text('Confirmer la creation'),
 
 
         content: Column(
@@ -322,7 +322,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
           children: [
 
 
-            const Text('�tes-vous s�r de vouloir cr�er cet �Ã©tablissement ?'),
+            const Text('etes-vous ser de vouloir creer cet eÃ©tablissement ?'),
 
 
             const SizedBox(height: 16),
@@ -346,7 +346,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
             Text('Lits: ${widget.numberOfBeds}'),
 
 
-            Text('Surface: ${widget.solarSurface.toStringAsFixed(0)} m�'),
+            Text('Surface: ${widget.solarSurface.toStringAsFixed(0)} me'),
 
 
             Text('Consommation: ${widget.monthlyConsumption.toStringAsFixed(0)} kWh/mois'),
@@ -391,7 +391,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
             ),
 
 
-            child: const Text('Confirmer et cr�er'),
+            child: const Text('Confirmer et creer'),
 
 
           ),
@@ -409,7 +409,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
     if (confirmed != true) {
 
 
-      return; // L'utilisateur a annulé�
+      return; // L'utilisateur a annulée
 
 
     }
@@ -451,7 +451,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
     try {
 
 
-      // Cr�er l'�Ã©tablissement dans le backend
+      // Creer l'eÃ©tablissement dans le backend
 
 
       final request = EstablishmentRequest(
@@ -496,7 +496,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
         Navigator.pop(context); // Fermer le dialog de chargement
 
 
-        // Supprimer tous les brouillons apr�s cr�ation r�ussie
+        // Supprimer tous les brouillons apres creation reussie
 
 
         await DraftService.clearAllDrafts();
@@ -508,7 +508,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
           SnackBar(
 
 
-            content: const Text('�Ã©tablissement cr�� avec succ�s!'),
+            content: const Text('eÃ©tablissement cree avec succes!'),
 
 
             backgroundColor: SemanticColors.success(context),
@@ -523,7 +523,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
         );
 
 
-        // Naviguer vers la page de choix des r�sultats
+        // Naviguer vers la page de choix des resultats
 
 
         final themeProvider = ThemeProvider();
@@ -586,7 +586,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
           SnackBar(
 
 
-            content: Text('Erreur lors de la cr�ation: ${e.toString()}'),
+            content: Text('Erreur lors de la creation: ${e.toString()}'),
 
 
             backgroundColor: SemanticColors.error(context),
@@ -757,7 +757,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
       appBar: AppBar(
 
 
-        title: const Text('R�capitulatif'),
+        title: const Text('Recapitulatif'),
 
 
         leading: IconButton(
@@ -799,7 +799,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
               children: [
 
 
-                // TEST: V�rifier que le Column fonCoûtionne
+                // TEST: Verifier que le Column fonctionne
 
 
                 Container(
@@ -850,10 +850,10 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                     'Technique',
 
 
-                    '�quipements',
+                    'Equipements',
 
 
-                    'R�capitulatif',
+                    'Recapitulatif',
 
 
                   ],
@@ -928,7 +928,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                       Text(
 
 
-                        'V�rifiez vos informations',
+                        'Verifiez vos informations',
 
 
                         style: GoogleFonts.inter(
@@ -955,7 +955,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                       Text(
 
 
-                        'Veuillez v�rifier toutes les informations avant de cr�er votre �Ã©tablissement',
+                        'Veuillez verifier toutes les informations avant de creer votre eÃ©tablissement',
 
 
                         textAlign: TextAlign.center,
@@ -1000,7 +1000,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                   isDark: isDark,
 
 
-                  title: 'A1 - Identification de l\'�Ã©tablissement',
+                  title: 'A1 - Identification de l\'eÃ©tablissement',
 
 
                   icon: Icons.business,
@@ -1012,7 +1012,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                   children: [
 
 
-                    _buildInfoRow('Type d\'�Ã©tablissement', widget.institutionType, isDark),
+                    _buildInfoRow('Type d\'eÃ©tablissement', widget.institutionType, isDark),
 
 
                     _buildInfoRow('Nom', widget.institutionName, isDark),
@@ -1069,10 +1069,10 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                   children: [
 
 
-                    _buildInfoRow('Surface installable (m�)', widget.solarSurface.toStringAsFixed(2), isDark),
+                    _buildInfoRow('Surface installable (me)', widget.solarSurface.toStringAsFixed(2), isDark),
 
 
-                    _buildInfoRow('Surface non critique (m�)', widget.nonCriticalSurface.toStringAsFixed(2), isDark),
+                    _buildInfoRow('Surface non critique (me)', widget.nonCriticalSurface.toStringAsFixed(2), isDark),
 
 
                     _buildInfoRow('Consommation mensuelle (kWh)', widget.monthlyConsumption.toStringAsFixed(2), isDark),
@@ -1111,7 +1111,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                           Text(
 
 
-                            'Recommandations calcul�es',
+                            'Recommandations calculees',
 
 
                             style: GoogleFonts.inter(
@@ -1159,7 +1159,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                 const SizedBox(height: 16),
 
 
-                // SeCoûtion A5: �quipements
+                // Section A5: Equipements
 
 
                 _buildSectionCard(
@@ -1171,7 +1171,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                   isDark: isDark,
 
 
-                  title: 'A5 - Choix des �quipements',
+                  title: 'A5 - Choix des Equipements',
 
 
                   icon: Icons.shopping_cart,
@@ -1240,7 +1240,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                     _buildInfoRow(
 
 
-                      'R�gulateur',
+                      'Regulateur',
 
 
                       getEquipmentName(widget.selectedController, widget.controllers),
@@ -1306,7 +1306,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                           Text(
 
 
-                            'Co�t total estim� des �quipements',
+                            'Coet total estime des Equipements',
 
 
                             style: GoogleFonts.inter(
@@ -1462,7 +1462,7 @@ class _EstablishmentReviewPageState extends State<EstablishmentReviewPage> {
                           label: Text(
 
 
-                            _isCreating ? 'Cr�ation en cours...' : 'Confirmer et cr�er',
+                            _isCreating ? 'Creation en cours...' : 'Confirmer et creer',
 
 
                             style: GoogleFonts.inter(

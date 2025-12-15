@@ -292,7 +292,7 @@ class _FormB5PageState extends State<FormB5Page> {
                             context: context,
                             isDark: isDark,
                             icon: Icons.attach_money,
-                            label: 'Coût d\'installation',
+                            label: 'ct d\'installation',
                             value: (economy!['installationCost'] as double).toStringAsFixed(0),
                             unit: 'DH',
                             color: MedicalSolarColors.error,

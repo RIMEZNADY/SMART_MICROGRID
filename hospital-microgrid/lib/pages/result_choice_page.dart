@@ -36,7 +36,7 @@ class _ResultChoicePageState extends State<ResultChoicePage> {
       _error = null;
     });
     try {
-      // Appel l�ger : forecast 1 jour pour v�rifier l'acc�s IA via backend
+      // Appel leger : forecast 1 jour pour verifier l'acces IA via backend
       await AiService.getForecast(widget.establishmentId, horizonDays: 1);
       setState(() {
         _iaAvailable = true;
@@ -93,7 +93,7 @@ class _ResultChoicePageState extends State<ResultChoicePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choix du mode de r�sultats'),
+        title: const Text('Choix du mode de resultats'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -101,7 +101,7 @@ class _ResultChoicePageState extends State<ResultChoicePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'S�leCoûtionnez comment afficher vos r�sultats',
+              'Selectionnez comment afficher vos resultats',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -118,7 +118,7 @@ class _ResultChoicePageState extends State<ResultChoicePage> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                   SizedBox(width: 8),
-                  Text('V�rification de la disponibilité� IA...'),
+                  Text('Verification de la disponibilitée IA...'),
                 ],
               )
             else if (_error != null)
@@ -135,7 +135,7 @@ class _ResultChoicePageState extends State<ResultChoicePage> {
             ElevatedButton.icon(
               onPressed: _goToCalc,
               icon: const Icon(Icons.calculate),
-              label: const Text('Voir r�sultats (Calcul)'),
+              label: const Text('Voir resultats (Calcul)'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -144,7 +144,7 @@ class _ResultChoicePageState extends State<ResultChoicePage> {
             ElevatedButton.icon(
               onPressed: _iaAvailable && !_isChecking ? _goToIa : null,
               icon: const Icon(Icons.psychology),
-              label: const Text('Voir r�sultats (IA)'),
+              label: const Text('Voir resultats (IA)'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -152,7 +152,7 @@ class _ResultChoicePageState extends State<ResultChoicePage> {
             const SizedBox(height: 8),
             TextButton(
               onPressed: _isChecking ? null : _checkIaAvailability,
-              child: const Text('Re-tester la disponibilité� IA'),
+              child: const Text('Re-tester la disponibilitée IA'),
             ),
           ],
         ),

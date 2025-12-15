@@ -44,20 +44,20 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  
  if (!hasPermission) {
  setState(() {
- _errorMessage = 'Permission de localisation refusé�e. Veuillez l\'aCoûtiver dans les paramé�tres.';
+ _errorMessage = 'Permission de localisation refusee. Veuillez l\'activer dans les parametres.';
  _isLoading = false;
  });
  return;
  }
 
- // V�rifier si le GPS est aCoûtiv�
+ // Verifier si le GPS est active
  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
  if (!serviceEnabled) {
- setState(() {
- _errorMessage = 'Le GPS n\'est pas aCoûtivé�. Veuillez l\'aCoûtiver dans les paramé�tres.';
- _isLoading = false;
- });
- // Proposer d'ouvrir les paramé�tres
+setState(() {
+_errorMessage = 'Le GPS n\'est pas active. Veuillez l\'activer dans les parametres.';
+_isLoading = false;
+});
+ // Proposer d'ouvrir les paraméetres
  _showEnableGPSDialog();
  return;
  }
@@ -73,7 +73,7 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  return;
  }
 
- // Dé�terminer la zone solaire depuis le backend
+ // Determiner la zone solaire depuis le backend
  final zone = await SolarZoneService.getSolarZoneFromLocation(
  position.latitude,
  position.longitude,
@@ -97,11 +97,11 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  showDialog(
  context: context,
  builder: (context) => AlertDialog(
- title: const Text('GPS d�saCoûtiv�'),
- content: const Text(
- 'Le GPS doit �tre aCoûtiv� pour d�terminer votre zone solaire. '
- 'Voulez-vous ouvrir les param�tres ?',
- ),
+title: const Text('GPS desactive'),
+content: const Text(
+'Le GPS doit etre active pour determiner votre zone solaire. '
+'Voulez-vous ouvrir les parametres ?',
+),
  actions: [
  TextButton(
  onPressed: () => Navigator.pop(context),
@@ -112,7 +112,7 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  Navigator.pop(context);
  LocationService.openLocationSettings();
  },
- child: const Text('Ouvrir les param�tres'),
+ child: const Text('Ouvrir les parametres'),
  ),
  ],
  ),
@@ -144,7 +144,7 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  crossAxisAlignment: CrossAxisAlignment.stretch,
  children: [
  const SizedBox(height: 40),
- // Icé�ne GPS
+ // Icone GPS
  Container(
  width: 120,
  height: 120,
@@ -168,7 +168,7 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  const SizedBox(height: 32),
  // Titre
  Text(
- 'ACoûtivation de la Localisation',
+ 'Activation de la Localisation',
  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
  fontWeight: FontWeight.bold,
  ),
@@ -177,8 +177,8 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  const SizedBox(height: 16),
  // Description
  Text(
- 'Pour d�terminer votre zone solaire et optimiser votre microgrid, '
- 'nous avons besoin d\'acc�der � votre localisation.',
+'Pour determiner votre zone solaire et optimiser votre microgrid, '
+'nous avons besoin d\'acceder a votre localisation.',
  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
  color: isDark
  ? Colors.white70
@@ -187,7 +187,7 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  textAlign: TextAlign.center,
  ),
  const SizedBox(height: 48),
- // Bouton d'aCoûtivation
+ // Bouton d'activation
  if (!_permissionGranted || _currentPosition == null)
  ElevatedButton(
  onPressed: _isLoading ? null : _requestLocation,
@@ -211,7 +211,7 @@ class _LocationSetupPageState extends State<LocationSetupPage> {
  style: TextStyle(fontSize: 16),
  ),
  ),
- // R�sultat de la localisation
+ // Resultat de la localisation
  if (_currentPosition != null && _solarZone != null) ...[
  const SizedBox(height: 32),
  // Informations de la zone

@@ -36,7 +36,7 @@ class _FormB3PageState extends State<FormB3Page> {
   final List<String> _priorites = [
     'Haute - Production maximale d\'énergie',
     'Moyenne - Équilibre coût/efficacité',
-    'Basse - Coût minimal',
+    'Basse - ct minimal',
   ];
 
   void _handleNext() {

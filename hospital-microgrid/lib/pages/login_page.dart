@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hospital_microgrid/main.dart';
+import 'package:hospital_microgrid/pages/auth_page.dart';
 import 'package:hospital_microgrid/providers/theme_provider.dart';
 import 'package:hospital_microgrid/services/auth_service.dart';
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage>
       });
 
       try {
-        // Appel API r�el au backend
+        // Appel API reel au backend
         await AuthService.login(
           _emailController.text.trim(),
           _passwordController.text,
@@ -122,7 +123,7 @@ class _LoginPageState extends State<LoginPage>
                   ]
                 : [
                     MedicalSolarColors.offWhite,
-                    const Color(0xFFE8F4F8), // Bleu tr�s clair
+                    MedicalSolarColors.medicalBlue.withOpacity(0.05),
                   ],
           ),
         ),
@@ -147,7 +148,16 @@ class _LoginPageState extends State<LoginPage>
                             Icons.arrow_back,
                             color: isDark ? Colors.white : MedicalSolarColors.softGrey,
                           ),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const AuthPage()),
+                              );
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -196,11 +206,11 @@ class _LoginPageState extends State<LoginPage>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Connectez-vous à � votre compte',
+                        'Connectez-vous a votre compte',
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           color: isDark
-                              ? Colors.white.withOpacity(0.7)
+                              ? Colors.white.withOpacity(0.8)
                               : MedicalSolarColors.softGrey.withOpacity(0.7),
                         ),
                         textAlign: TextAlign.center,
@@ -214,11 +224,26 @@ class _LoginPageState extends State<LoginPage>
                         autofillHints: const [AutofillHints.email],
                         decoration: InputDecoration(
                           labelText: 'Email',
+                          labelStyle: GoogleFonts.inter(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.7)
+                                : MedicalSolarColors.softGrey.withOpacity(0.7),
+                          ),
                           hintText: 'votre@email.com',
-                          prefixIcon: const Icon(Icons.email_outlined),
+                          hintStyle: GoogleFonts.inter(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.5)
+                                : MedicalSolarColors.softGrey.withOpacity(0.5),
+                          ),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: isDark
+                                ? Colors.white.withOpacity(0.7)
+                                : MedicalSolarColors.softGrey.withOpacity(0.7),
+                          ),
                           suffixIcon: IconButton(
                             icon: const Text('@', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            tooltip: 'Ins�rer @',
+                            tooltip: 'Inserer @',
                             onPressed: () {
                               final text = _emailController.text;
                               final selection = _emailController.selection;
@@ -283,13 +308,31 @@ class _LoginPageState extends State<LoginPage>
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
                           labelText: 'Mot de passe',
-                          hintText: '��������',
-                          prefixIcon: const Icon(Icons.lock_outlined),
+                          labelStyle: GoogleFonts.inter(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.7)
+                                : MedicalSolarColors.softGrey.withOpacity(0.7),
+                          ),
+                          hintText: 'Entrez votre mot de passe',
+                          hintStyle: GoogleFonts.inter(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.5)
+                                : MedicalSolarColors.softGrey.withOpacity(0.5),
+                          ),
+                          prefixIcon: Icon(
+                            Icons.lock_outlined,
+                            color: isDark
+                                ? Colors.white.withOpacity(0.7)
+                                : MedicalSolarColors.softGrey.withOpacity(0.7),
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.7)
+                                  : MedicalSolarColors.softGrey.withOpacity(0.7),
                             ),
                             onPressed: () {
                               setState(() {
@@ -333,7 +376,7 @@ class _LoginPageState extends State<LoginPage>
                             return 'Veuillez entrer votre mot de passe';
                           }
                           if (value.length < 6) {
-                            return 'Le mot de passe doit contenir au moins 6 caraCoût�res';
+                            return 'Le mot de passe doit contenir au moins 6 caracteres';
                           }
                           return null;
                         },

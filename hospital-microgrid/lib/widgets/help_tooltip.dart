@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
 
-/// Widget r�utilisable pour afficher une ic�ne d'aide avec tooltip explicatif
+/// Widget reutilisable pour afficher une icene d'aide avec tooltip explicatif
 
 class HelpTooltip extends StatelessWidget {
 

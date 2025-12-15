@@ -100,17 +100,25 @@ class _WelcomePageState extends State<WelcomePage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              MedicalSolarColors.offWhite,
-              MedicalSolarColors.medicalBlue.withOpacity(0.1),
-              MedicalSolarColors.solarGreen.withOpacity(0.08),
-            ],
+            colors: isDark
+                ? [
+                    MedicalSolarColors.darkBackground,
+                    MedicalSolarColors.darkSurface,
+                    MedicalSolarColors.medicalBlueDark.withOpacity(0.1),
+                  ]
+                : [
+                    MedicalSolarColors.offWhite,
+                    MedicalSolarColors.medicalBlue.withOpacity(0.1),
+                    MedicalSolarColors.solarGreen.withOpacity(0.08),
+                  ],
           ),
         ),
         child: SafeArea(
@@ -215,40 +223,67 @@ class _WelcomePageState extends State<WelcomePage>
                       ),
                     ),
                     const SizedBox(height: 50),
-                    // Nom de l'app
-                    Text(
-                      'SOLAR',
-                      style: GoogleFonts.inter(
-                        fontSize: 56,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 4,
-                        foreground: Paint()
-                          ..shader = const LinearGradient(
-                            colors: [
-                              MedicalSolarColors.medicalBlue,
-                              MedicalSolarColors.solarGreen,
-                              MedicalSolarColors.solarYellow,
-                            ],
-                          ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
+                    // Nom de l'app avec effet amélioré
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: isDark
+                            ? [
+                                MedicalSolarColors.medicalBlueDark,
+                                MedicalSolarColors.solarGreenDark,
+                                MedicalSolarColors.solarYellowDark,
+                              ]
+                            : [
+                                MedicalSolarColors.medicalBlue,
+                                MedicalSolarColors.solarGreen,
+                                MedicalSolarColors.solarYellow,
+                              ],
+                      ).createShader(bounds),
+                      child: Text(
+                        'SOLAR',
+                        style: GoogleFonts.inter(
+                          fontSize: 56,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 4,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
+                    const SizedBox(height: 8),
                     Text(
                       'MEDICAL',
                       style: GoogleFonts.inter(
                         fontSize: 32,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 3,
-                        color: MedicalSolarColors.softGrey,
+                        color: isDark ? Colors.white : MedicalSolarColors.softGrey,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Microgrid Intelligent pour Hôpitaux',
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: MedicalSolarColors.softGrey.withOpacity(0.7),
-                        letterSpacing: 0.5,
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.1)
+                            : MedicalSolarColors.medicalBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.2)
+                              : MedicalSolarColors.medicalBlue.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        'Microgrid Intelligent pour Hopitaux',
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: isDark 
+                              ? Colors.white.withOpacity(0.9)
+                              : MedicalSolarColors.softGrey.withOpacity(0.8),
+                          letterSpacing: 0.5,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 60),
@@ -256,8 +291,12 @@ class _WelcomePageState extends State<WelcomePage>
                     SizedBox(
                       width: 200,
                       child: LinearProgressIndicator(
-                        backgroundColor: MedicalSolarColors.medicalBlue.withOpacity(0.1),
-                        valueColor: const AlwaysStoppedAnimation<Color>(MedicalSolarColors.medicalBlue),
+                        backgroundColor: isDark
+                            ? MedicalSolarColors.medicalBlueDark.withOpacity(0.2)
+                            : MedicalSolarColors.medicalBlue.withOpacity(0.1),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isDark ? MedicalSolarColors.medicalBlueDark : MedicalSolarColors.medicalBlue,
+                        ),
                         minHeight: 2,
                       ),
                     ),

@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hospital_microgrid/services/solar_zone_service.dart';
 import 'package:hospital_microgrid/pages/form_a1_page.dart';
 import 'package:hospital_microgrid/pages/form_b1_page.dart';
+import 'package:hospital_microgrid/pages/map_selection_page.dart';
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
 
 class InstitutionChoicePage extends StatelessWidget {
@@ -65,16 +66,30 @@ class InstitutionChoicePage extends StatelessWidget {
                     isDark: isDark,
                     label: 'EXISTANT',
                     icon: Icons.local_hospital,
-                    onPressed: () {
-                      // Navigate to Form A1
-                      Navigator.push(
+                    onPressed: () async {
+                      // Navigate to Map Selection Page first
+                      final selectedPosition = await Navigator.push<Position>(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FormA1Page(
-                            position: position,
+                          builder: (context) => MapSelectionPage(
+                            initialPosition: position,
                           ),
                         ),
                       );
+                      
+                      // If position selected, navigate to Form A1
+                      if (selectedPosition != null) {
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FormA1Page(
+                                position: selectedPosition,
+                              ),
+                            ),
+                          );
+                        }
+                      }
                     },
                     color: MedicalSolarColors.medicalBlue,
                   ),

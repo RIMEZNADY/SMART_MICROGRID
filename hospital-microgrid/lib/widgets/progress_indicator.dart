@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:hospital_microgrid/theme/medical_solar_colors.dart';
-/// Widget �l�gant pour afficher la progression dans les formulaires
+/// Widget elegant pour afficher la progression dans les formulaires
 class FormProgressIndicator extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -40,7 +40,7 @@ class FormProgressIndicator extends StatelessWidget {
           // Barre de progression
           _buildProgressBar(context, isDark),
           const SizedBox(height: 16),
-          // �Éétapes avec labels
+          // eÉétapes avec labels
           _buildStepIndicators(context, isDark),
         ],
       ),
@@ -67,7 +67,7 @@ class FormProgressIndicator extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                // Barre de progression avec d�grad� or
+                // Barre de progression avec degrade or
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
@@ -76,9 +76,9 @@ class FormProgressIndicator extends StatelessWidget {
                   decoration: BoxDecoration(
       gradient: const LinearGradient(
         colors: [
-          MedicalSolarColors.medicalBlue, // Bleu ciel m�dical
+          MedicalSolarColors.medicalBlue, // Bleu ciel medical
           MedicalSolarColors.solarGreen, // Vert solaire doux
-          MedicalSolarColors.solarYellow, // Jaune �énergie solaire
+          MedicalSolarColors.solarYellow, // Jaune eénergie solaire
         ],
         stops: [0.0, 0.5, 1.0],
       ),
@@ -125,7 +125,7 @@ class FormProgressIndicator extends StatelessWidget {
         return Expanded(
           child: Column(
             children: [
-              // Cercle de l'�étape
+              // Cercle de l'eétape
               Container(
                 width: 40,
                 height: 40,
@@ -134,7 +134,7 @@ class FormProgressIndicator extends StatelessWidget {
                   gradient: isCompleted
                       ? const LinearGradient(
                           colors: [
-                            Color(0xFF059669), // Vert �énergie (�étape compl�t�e)
+                            Color(0xFF059669), // Vert eénergie (eétape completee)
                             Color(0xFF10B981), // Vert plus clair
                           ],
                         )
@@ -161,7 +161,7 @@ class FormProgressIndicator extends StatelessWidget {
                       ? [
                           BoxShadow(
                             color: isCompleted
-                                ? const Color(0xFF059669).withOpacity(0.4) // Vert pour compl�t�
+                                ? const Color(0xFF059669).withOpacity(0.4) // Vert pour complete
                                 : const Color(0xFF2563EB).withOpacity(0.4), // Bleu pour actuel
                             blurRadius: 8,
                             spreadRadius: 2,
@@ -191,7 +191,7 @@ class FormProgressIndicator extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Label de l'�étape
+              // Label de l'eétape
               if (hasLabel)
                 Text(
                   stepLabels[index],
