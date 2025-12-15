@@ -67,9 +67,9 @@ class ApiService {
     // Debug: afficher le token (masqué pour sécurité)
     final token = await _getToken();
     if (token != null) {
-      print('🔑 Token prsent: ${token.substring(0, 20)}...');
+      print('🔑 Token present: ${token.substring(0, 20)}...');
     } else {
-      print('⚠️ Aucun token trouv pour l\'endpoint: $endpoint');
+      print('⚠️ Aucun token trouve pour l\'endpoint: $endpoint');
     }
     
     try {
@@ -78,13 +78,16 @@ class ApiService {
       // Debug: afficher le statut de la réponse
       if (response.statusCode == 403 || response.statusCode == 401) {
         print('❌ Erreur ${response.statusCode} pour $endpoint');
-        print('   Headers envoyés: ${headers.keys}');
-        print('   Token présent: ${token != null}');
+        print('   URL: $url');
+        print('   Headers envoyes: ${headers.keys}');
+        print('   Token present: ${token != null}');
+        print('   Response body: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}');
       }
       
       return response;
     } catch (e) {
-      throw Exception('Erreur réseau: $e');
+      print('❌ Exception lors de la requete GET vers $endpoint: $e');
+      throw Exception('Erreur reseau: $e');
     }
   }
   
@@ -93,15 +96,34 @@ class ApiService {
     final headers = await _getHeaders(includeAuth: includeAuth);
     final url = Uri.parse('$baseUrl$endpoint');
     
+    // Debug: afficher le token (masqué pour sécurité)
+    final token = await _getToken();
+    if (token != null) {
+      print('🔑 Token present pour POST: ${token.substring(0, 20)}...');
+    } else {
+      print('⚠️ Aucun token trouve pour POST vers: $endpoint');
+    }
+    
     try {
       final response = await http.post(
         url,
         headers: headers,
         body: jsonEncode(body),
       );
+      
+      // Debug: afficher le statut de la réponse
+      if (response.statusCode == 403 || response.statusCode == 401) {
+        print('❌ Erreur ${response.statusCode} pour POST $endpoint');
+        print('   URL: $url');
+        print('   Headers envoyes: ${headers.keys}');
+        print('   Token present: ${token != null}');
+        print('   Response body: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}');
+      }
+      
       return response;
     } catch (e) {
-      throw Exception('Erreur réseau: $e');
+      print('❌ Exception lors de la requete POST vers $endpoint: $e');
+      throw Exception('Erreur reseau: $e');
     }
   }
   

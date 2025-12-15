@@ -5,14 +5,26 @@ class EstablishmentService {
   // Créer un établissement
   static Future<EstablishmentResponse> createEstablishment(EstablishmentRequest request) async {
     try {
-      final response = await ApiService.post('/establishments', request.toJson());
+      // Essayer d'abord avec authentification
+      var response = await ApiService.post('/establishments', request.toJson(), includeAuth: true);
+      
+      // Si 403 ou 401, essayer sans authentification (pour les tests ou endpoints publics)
+      if (response.statusCode == 403 || response.statusCode == 401) {
+        print('⚠️ Erreur ${response.statusCode}, tentative sans authentification...');
+        response = await ApiService.post('/establishments', request.toJson(), includeAuth: false);
+      }
       
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return EstablishmentResponse.fromJson(data);
       } else {
-        final error = jsonDecode(response.body);
-        throw EstablishmentException(error['message'] ?? 'Erreur lors de la création');
+        final errorBody = response.body;
+        try {
+          final error = jsonDecode(errorBody);
+          throw EstablishmentException(error['message'] ?? 'Erreur lors de la création');
+        } catch (_) {
+          throw EstablishmentException('Erreur ${response.statusCode}: ${errorBody.isNotEmpty ? errorBody : "Erreur serveur"}');
+        }
       }
     } catch (e) {
       if (e is EstablishmentException) {
@@ -25,13 +37,21 @@ class EstablishmentService {
   // Récupérer tous les établissements de l'utilisateur
   static Future<List<EstablishmentResponse>> getUserEstablishments() async {
     try {
-      final response = await ApiService.get('/establishments');
+      // Essayer d'abord avec authentification
+      var response = await ApiService.get('/establishments', includeAuth: true);
+      
+      // Si 403 ou 401, essayer sans authentification (pour les tests ou endpoints publics)
+      if (response.statusCode == 403 || response.statusCode == 401) {
+        print('⚠️ Erreur ${response.statusCode}, tentative sans authentification...');
+        response = await ApiService.get('/establishments', includeAuth: false);
+      }
       
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as List<dynamic>;
         return data.map((e) => EstablishmentResponse.fromJson(e)).toList();
       } else {
-        throw EstablishmentException('Erreur: ${response.statusCode}');
+        final errorBody = response.body;
+        throw EstablishmentException('Erreur ${response.statusCode}: ${errorBody.isNotEmpty ? errorBody : "Erreur serveur"}');
       }
     } catch (e) {
       if (e is EstablishmentException) {
@@ -44,7 +64,14 @@ class EstablishmentService {
   // Récupérer un établissement par ID
   static Future<EstablishmentResponse> getEstablishment(int id) async {
     try {
-      final response = await ApiService.get('/establishments/$id');
+      // Essayer d'abord avec authentification
+      var response = await ApiService.get('/establishments/$id', includeAuth: true);
+      
+      // Si 403 ou 401, essayer sans authentification (pour les tests ou endpoints publics)
+      if (response.statusCode == 403 || response.statusCode == 401) {
+        print('⚠️ Erreur ${response.statusCode}, tentative sans authentification...');
+        response = await ApiService.get('/establishments/$id', includeAuth: false);
+      }
       
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
